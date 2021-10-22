@@ -30,7 +30,7 @@ socket.on('get_data',(data)=>{console.log(data)
 		
 
 	}
-	else if(data[0]==='kl_data'){console.log(data)}
+	else if(data[0]==='kl_data'){console.log('data')}
 })
 
 socket.on('chat',(data)=>{console.log(data)})
