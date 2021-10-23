@@ -41,7 +41,7 @@ app.get('/', (req, res) => {res.sendFile (__dirname + '/static/index.html' )})
 io.on('connection', (socket) => {
 	io.to(socket.id).emit('chat',['подключился',socket.id]); console.log ('yes conns', socket.id);	
 	
-	socket.on ('disconnect',(data)=>{console.log (socket.id, 'conns fail')})
+	socket.on ('disconnect',(data)=>{console.log (socket.id, 'conn fail')})
 	
 	socket.on ('check_in',(data)=>{console.log(64,data)
 		if(data[0]==='Регистрация'){
