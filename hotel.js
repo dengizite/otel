@@ -17,11 +17,7 @@ async function insrt_user(user){dbase.insertOne(user)}
 /* import {default as mongodb} from 'mongodb';
 mongodb+srv://dengizite:Egorka124@cluster0.p49dp.mongodb.net/hotel?retryWrites=true&w=majority
 const MongoClient=mongodb.MongoClient,
-client=new MongoClient('mongodb+srv://dbuser:81601312@cluster0.vcupc.mongodb.net/pref?retryWrites=true&w=majority'),
-event_close = "serverOpening", event_open = "serverClosed";
-
-client.on(event_close,ev=>{console.log(40,`received ${event_close}: ${JSON.stringify(ev, null, 2)}`)})
-client.on(event_open,ev=>{console.log(45,`received ${event_open}: ${JSON.stringify(ev, null, 2)}`)}) 
+client=new MongoClient('mongodb+srv://dbuser:81601312@cluster0.vcupc.mongodb.net/pref?retryWrites=true&w=majority')
 
 let dbase
 
