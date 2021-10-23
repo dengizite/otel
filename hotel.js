@@ -19,8 +19,6 @@ mongodb+srv://dengizite:Egorka124@cluster0.p49dp.mongodb.net/hotel?retryWrites=t
 const MongoClient=mongodb.MongoClient,
 client=new MongoClient('mongodb+srv://dbuser:81601312@cluster0.vcupc.mongodb.net/pref?retryWrites=true&w=majority')
 
-function catch_err(err){console.log(195,err.message);if(err.message.includes('must be connected')===true){con_mongo()}}
-
 async function find_user(a,b){return dbase.findOne(a,b)}
 async function insrt_user(user){dbase.insertOne(user)}
 async function upd_user(user,upd_data){dbase.updateOne({[user]:{$exists:true}},upd_data)}
