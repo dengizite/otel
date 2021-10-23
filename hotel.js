@@ -19,7 +19,7 @@ mongodb+srv://dengizite:Egorka124@cluster0.p49dp.mongodb.net/hotel?retryWrites=t
 const MongoClient=mongodb.MongoClient,
 client=new MongoClient('mongodb+srv://dbuser:81601312@cluster0.vcupc.mongodb.net/pref?retryWrites=true&w=majority')
 
-async function con_mongo(){await client.connect();console.log('Connected');dbase=client.db('pref').collection('users')};con_mongo()
+
 
 function catch_err(err){console.log(195,err.message);if(err.message.includes('must be connected')===true){con_mongo()}}
 
