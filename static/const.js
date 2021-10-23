@@ -144,8 +144,10 @@ add_r=`
 show_r=`
 <div id="show_room"></div>
 `
-
-
+function edit_r(el){ 
+    console.log(el.parentElement.querySelector('p'));
+    socket.emit('edit_data',['rooms_data',el.textContent,el.parentElement.querySelector('p').textContent])
+}
 
 function kl_contr(el){
     if(el.textContent==='Найти'){socket.emit('get_data',['kl_data',search_kl.value])}

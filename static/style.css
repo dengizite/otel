@@ -50,5 +50,5 @@ INPUT{width: 12rem;}
 #add_room_bed,#add_room_cat{width: 6rem;}
 #add_descr_room {width:80%;height: 60%;}
 #show_room{position: absolute;width: 70%;left: 50%;transform: translate(-50%, 0);text-align:center;word-spacing:2rem;height: 50%;overflow:auto;margin-top:1rem;}
-.rooms{margin: 0.5rem; display: grid; grid: 2fr 2rem/33% 33% 33%;background-color: dimgrey; }
+.rooms{margin: 0.5rem; display: grid; grid: 2fr 2rem/33% 33% 33%;background-color: dimgrey;grid-column-gap: 0.1rem;}
 .rooms>P{grid-column: 1/4;}

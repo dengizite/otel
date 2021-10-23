@@ -15,10 +15,6 @@ function catch_err(err){console.log(195,err.message);if(err.message.includes('mu
 async function insrt_user(user){dbase.insertOne(user)}
 
 /* 
-mongodb+srv://dengizite:Egorka124@cluster0.p49dp.mongodb.net/hotel?retryWrites=true&w=majority
-const MongoClient=mongodb.MongoClient,
-client=new MongoClient('mongodb+srv://dbuser:81601312@cluster0.vcupc.mongodb.net/pref?retryWrites=true&w=majority')
-
 async function find_user(a,b){return dbase.findOne(a,b)}
 async function insrt_user(user){dbase.insertOne(user)}
 async function upd_user(user,upd_data){dbase.updateOne({[user]:{$exists:true}},upd_data)}
@@ -34,7 +30,7 @@ io.on('connection', (socket) => {
 	socket.on ('disconnect',(data)=>{console.log (socket.id, 'conn fail')})
 	
 	socket.on ('check_in',(data)=>{console.log(64,data)
-		if(data[0]==='Регистрация'){
+		if(data[0]==='add_client'){
 			clients[data[2]]={name:data[1],pass:data[3],ident:data[4],tel:data[5]};console.log(65,clients)
 			io.to(socket.id).emit('check_in',['set_cookie',data[2],data[3],control_menu])
 		}
@@ -59,22 +55,14 @@ io.on('connection', (socket) => {
 		if(data[0]==='add_client'){clients[data[2]]={name:data[1],pass:data[3],ident:data[4],tel:data[5]};console.log(52,clients)}
 		else if(data[0]==='add_room'){
 			rooms[data[1]]={price:data[2],bad:data[3],cat:data[4],descr:data[5],stat:'свободен'};console.log(53,rooms)
-
-
-			/* con_mongo().then(()=>{
-			db.users.insertOne({"name": "Tom", "age": 28, languages: ["english", "spanish"]})}) */
-
-
-
-
-			/* con_mongo().then(()=>{
-			insrt_user({[data[1]]:{'price':data[2],'bad':data[3],'cat':data[4],'descr':data[5],'stat':'свободен'}})})
-			.then((resp)=>{console.log(resp)})
-				.catch(err=>{catch_err(err)}) */
 				insrt_user({[data[1]]:{'price':data[2],'bad':data[3],'cat':data[4],'descr':data[5],'stat':'свободен'}})
 			.then((resp)=>{console.log(resp)})
 				.catch(err=>{catch_err(err)})
 		}
+	})
+
+	socket.on('edit_data',(data)=>{
+		console.log(11,data)
 	})
 
 	socket.on('chat',(msg)=>{console.log(11,msg)

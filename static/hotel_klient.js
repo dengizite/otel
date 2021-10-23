@@ -15,8 +15,9 @@ socket.on('check_in', function(data){
 })
 
 socket.on('get_data',(data)=>{console.log(data)
-	if(data[0]==='rooms_data'){let a=document.getElementById('show_room');if(a){a.remove()}
-		main_div.insertAdjacentHTML('beforeend',show_r)
+	let a=document.getElementById('show_room');if(a){a.remove()}
+	main_div.insertAdjacentHTML('beforeend',show_r)
+	if(data[0]==='rooms_data'){
 		for(let i in data[1]){console.log(data[1][i])
 			let p=`<div class="rooms">
 			<p>№ - ${i}; цена - ${data[1][i]['price']}; мест - ${data[1][i]['bad']}; категория - ${data[1][i]['cat']}; статус - ${data[1][i]['stat']}; описание - ${data[1][i]['descr']}</p>
@@ -30,7 +31,18 @@ socket.on('get_data',(data)=>{console.log(data)
 		
 
 	}
-	else if(data[0]==='kl_data'){console.log('data')}
+	else if(data[0]==='kl_data'){
+		for(let i in data[1]){console.log(data[1][i])
+			let p=`<div class="rooms">
+			<p>${JSON.stringify(data[1][i])}</p>
+			<button class="" onclick="edit_r(this)">Бронирования</button>
+			<button class="" onclick="edit_r(this)">Изменить</button>
+			<button class="" onclick="edit_r(this)">Удалить</button>
+			</div>
+			`
+			show_room.insertAdjacentHTML('beforeend',p)
+		}
+	}
 })
 
 socket.on('chat',(data)=>{console.log(data)})
