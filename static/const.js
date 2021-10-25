@@ -79,25 +79,25 @@ rooms_c=`
 <div id="rooms_control">
     <div class="device_but">        
         <select class="" id="room_bed">
-            <option selected disabled>Мест</option>
+            <option selected value="Мест">Мест</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="4">4</option>            
         </select>
         <select class="" id="room_cat">
-            <option selected disabled>Категория</option>
+            <option selected value="Категория">Категория</option>
             <option value="Люкс">Люкс</option>
             <option value="Стандарт">Стандарт</option>
             <option value="Эконом">Эконом</option>            
         </select>
         <select class="" id="room_avail">
-            <option selected disabled>Доступность</option>
+            <option selected value="Доступность">Доступность</option>
             <option value="Свободен">Свободен</option>
             <option value="Забронирован">Забронирован</option>
             <option value="Заселен">Заселен</option>            
         </select>
         <select class="" id="room_sort">
-            <option selected disabled>Сортировка</option>
+            <option selected value="Сортировка">Сортировка</option>
             <option value="дешевле">Сначала дешевле</option>
             <option value="дороже">Сначала дороже</option>                     
         </select>

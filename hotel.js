@@ -13,11 +13,15 @@ async function con_mongo(){await client.connect();console.log('Connected');dbase
 
 function catch_err(err){console.log(195,err.message);if(err.message.includes('must be connected')===true){con_mongo()}}
 async function insrt_user(user){dbase.insertOne(user)}
+async function find(a){return dbase.find(a,{projection:{_id:0}}).toArray()}
+//async function find(){return dbase.find({'bad':'1'},{projection:{_id:0}}).toArray()}
 
 /* 
 async function find_user(a,b){return dbase.findOne(a,b)}
 async function insrt_user(user){dbase.insertOne(user)}
 async function upd_user(user,upd_data){dbase.updateOne({[user]:{$exists:true}},upd_data)}
+find({},{projection:{_id:0,'TEST':1}}).toArray()
+dbase.find()
 */
 
 const app=express(),http=http_base.createServer(app),io=io_base(http),__dirname = path.resolve(),PORT=process.env.PORT||8080,clients={},rooms={}
@@ -40,22 +44,27 @@ io.on('connection', (socket) => {
 		}
 	})
 
-	socket.on('get_data',(data)=>{console.log(data)
+	socket.on('get_data',(data)=>{console.log(49,data)
 		if(data[0]==='Бронирования'){console.log(data)}
-		else if(data[0]==='rooms_data'){
-			
-			io.to(socket.id).emit('get_data',['rooms_data',rooms])
-			//for(let i in rooms){}
+		else if(data[0]==='rooms_data'){let q={}
+			if(data[1]!=='Мест'){q['bad']=data[1]};if(data[2]!=='Категория'){q['cat']=data[2]}
+			if(data[3]!=='Доступность'){q['stat']=data[3]};console.log(53,q)
+			find(q).then((resp)=>{console.log(54,resp)
+				io.to(socket.id).emit('get_data',['rooms_data',resp])
+			}).catch(err=>{catch_err(err)})
 		}
-		else if(data[0]==='kl_data'){io.to(socket.id).emit('get_data',['kl_data',clients])}
+		else if(data[0]==='kl_data'){
+			io.to(socket.id).emit('get_data',['kl_data',clients])
+		}
 		else if(data[0]==='Отчеты'){console.log(data)}
 	})
 
 	socket.on('send_data',(data)=>{console.log(data)
 		if(data[0]==='add_client'){clients[data[2]]={name:data[1],pass:data[3],ident:data[4],tel:data[5]};console.log(52,clients)}
 		else if(data[0]==='add_room'){
-			rooms[data[1]]={price:data[2],bad:data[3],cat:data[4],descr:data[5],stat:'свободен'};console.log(53,rooms)
-				insrt_user({[data[1]]:{'price':data[2],'bad':data[3],'cat':data[4],'descr':data[5],'stat':'свободен'}})
+			rooms[data[1]]={price:data[2],bad:data[3],cat:data[4],descr:data[5],stat:'Cвободен'};console.log(53,rooms)
+				//insrt_user({[data[1]]:{'price':data[2],'bad':data[3],'cat':data[4],'descr':data[5],'stat':'свободен'}})
+				insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'stat':'свободен'})
 			.then((resp)=>{console.log(resp)})
 				.catch(err=>{catch_err(err)})
 		}
