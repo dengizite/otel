@@ -146,7 +146,7 @@ show_r=`
 `
 function edit_r(el){ 
     console.log(el.parentElement.querySelector('p'));
-    socket.emit('edit_data',['rooms_data',el.textContent,el.parentElement.querySelector('p').textContent])
+    socket.emit('edit_data',[el.textContent,el.parentElement.querySelector('p').className ,el.parentElement.querySelector('p').id])
 }
 
 function kl_contr(el){

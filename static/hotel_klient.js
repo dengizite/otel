@@ -20,42 +20,19 @@ socket.on('get_data',(data)=>{console.log(data)
 	if(data[0]==='rooms_data'){
 		data[1].forEach(j=>{console.log(j)
 			let p=`<div class="rooms">
-				<p>№ - ${j['num']}; цена - ${j['price']}; мест - ${j['bad']}; категория - ${j['cat']}; статус - ${j['stat']}; описание - ${j['descr']}</p>
+				<p class ="room" id="${j['num']}">№ - ${j['num']}; цена - ${j['price']}; мест - ${j['bad']}; категория - ${j['cat']}; статус - ${j['stat']}; описание - ${j['descr']}</p>
 				<button class="" onclick="edit_r(this)">Забронировать</button>
 				<button class="" onclick="edit_r(this)">Изменить</button>
 				<button class="" onclick="edit_r(this)">Удалить</button>
 				</div>
 				`
 				show_room.insertAdjacentHTML('beforeend',p)
-			/* for(let i in j){
-				let p=`<div class="rooms">
-				<p>№ - ${i}; цена - ${j[i]['price']}; мест - ${j[i]['bad']}; категория - ${j[i]['cat']}; статус - ${j[i]['stat']}; описание - ${j[i]['descr']}</p>
-				<button class="" onclick="edit_r(this)">Забронировать</button>
-				<button class="" onclick="edit_r(this)">Изменить</button>
-				<button class="" onclick="edit_r(this)">Удалить</button>
-				</div>
-				`
-				show_room.insertAdjacentHTML('beforeend',p)
-			} */
-		})
+		})	
 	}		
-		/* for(let i in data[1]){console.log(data[1][i])
-			let p=`<div class="rooms">
-			<p>№ - ${i}; цена - ${data[1][i]['price']}; мест - ${data[1][i]['bad']}; категория - ${data[1][i]['cat']}; статус - ${data[1][i]['stat']}; описание - ${data[1][i]['descr']}</p>
-			<button class="" onclick="edit_r(this)">Забронировать</button>
-        	<button class="" onclick="edit_r(this)">Изменить</button>
-			<button class="" onclick="edit_r(this)">Удалить</button>
-			</div>
-			`
-			show_room.insertAdjacentHTML('beforeend',p)
-		} */
-		
-
-	
 	else if(data[0]==='kl_data'){
 		for(let i in data[1]){console.log(data[1][i])
 			let p=`<div class="rooms">
-			<p>${JSON.stringify(data[1][i])}</p>
+			<p class ="user" id="${data[1][i].ident}">${JSON.stringify(data[1][i])}</p>
 			<button class="" onclick="edit_r(this)">Бронирования</button>
 			<button class="" onclick="edit_r(this)">Изменить</button>
 			<button class="" onclick="edit_r(this)">Удалить</button>
@@ -82,6 +59,3 @@ document.addEventListener('DOMContentLoaded',(e)=>{
 		main_div.insertAdjacentHTML('beforeend',reg_butt)
 	}
 })
-
-
-
