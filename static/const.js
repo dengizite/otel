@@ -137,16 +137,33 @@ add_r=`
     </select>
     <label for="add_descr_room">Описание номера:</label>
     <textarea id="add_descr_room" name="add_descr_room" rows="5" cols="33"></textarea>
-     <button class="buttons" onclick="add_rooms(this)">Добавить</button>
+     <button id="but_reg" class="buttons" onclick="add_rooms(this)">Добавить</button>
      <button class="buttons" onclick="add_rooms(this)">Закрыть</button>
 </div>`,
 
 show_r=`
 <div id="show_room"></div>
 `
-function edit_r(el){ 
-    console.log(el.parentElement.querySelector('p'));
-    socket.emit('edit_data',[el.textContent,el.parentElement.querySelector('p').className ,el.parentElement.querySelector('p').id])
+function edit_r(el){console.log(el.parentElement);
+    let e=el.parentElement
+    socket.emit('edit_data',[el.textContent,e.querySelector('p').className ,e.querySelector('p').id])
+    if(el.textContent==='Удалить'){e.remove()}
+    else if(el.textContent==='Изменить'){
+        if(e.querySelector('p').className==='user'){
+            let d=JSON.parse(e.querySelector('p').textContent);console.log(d)
+            main_div.insertAdjacentHTML('beforeend',window_reg);but_reg.textContent='Изменить'
+            new_name.value=d.name;new_fam.value=d.fam;new_pass.value=d.pass;
+            new_ident.value=d.ident;new_tel.value=d.tel;
+            
+        }
+        else if(e.querySelector('p').className==='room'){
+            let d=JSON.parse(e.querySelector('p').textContent);console.log(d)
+            main_div.insertAdjacentHTML('beforeend',add_r);but_reg.textContent='Изменить'
+            add_number.value=d.num;add_price.value=d.price;add_room_bed.value=d.bad;
+            add_room_cat.value=d.cat;add_descr_room.textContent=d.descr;
+        }
+    }
+
 }
 
 function kl_contr(el){

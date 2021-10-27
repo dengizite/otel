@@ -19,8 +19,8 @@ con_mongo()
 
 function catch_err(err){console.log(195,err.message);if(err.message.includes('must be connected')===true){con_mongo()}}
 async function insrt_user(a,b){b.insertOne(a)}
-//async function find(a){return dbRooms.find(a,{projection:{_id:0}}).toArray()}
 async function find(a,b){return b.find(a,{projection:{_id:0}}).toArray()}
+async function del(a,b){b.deleteOne(a)}
 //async function find(){return dbRooms.find({'bad':'1'},{projection:{_id:0}}).toArray()}
 
 /* 
@@ -73,18 +73,27 @@ io.on('connection', (socket) => {
 		if(data[0]==='add_client'){
 			insrt_user({'name':data[1],'fam':data[2],'pass':data[3],'ident':data[4],'tel':data[5]},dbUsers)
 			.then((resp)=>{console.log(resp)})
-				.catch(err=>{catch_err(err)})
+			.catch(err=>{catch_err(err)})
 		}
 		else if(data[0]==='add_room'){				
-				insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'stat':'Cвободен'},dbRooms)
+			insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'stat':'Cвободен'},dbRooms)
 			.then((resp)=>{console.log(resp)})
-				.catch(err=>{catch_err(err)})
+			.catch(err=>{catch_err(err)})
 		}
 	})
 
 	socket.on('edit_data',(data)=>{console.log(11,data)
 		if(data[0]==='Удалить'){
-
+			if(data[1]==='user'){
+				del({'ident':data[2]},dbUsers)
+				.then((resp)=>{console.log(resp)})
+				.catch(err=>{catch_err(err)})
+			}
+			else if(data[1]==='room'){
+				del({'num':data[2]},dbRooms)
+				.then((resp)=>{console.log(resp)})
+				.catch(err=>{catch_err(err)})
+			}
 		}
 	})
 

@@ -18,7 +18,17 @@ socket.on('get_data',(data)=>{console.log(data)
 	let a=document.getElementById('show_room');if(a){a.remove()}
 	main_div.insertAdjacentHTML('beforeend',show_r)
 	if(data[0]==='rooms_data'){
-		data[1].forEach(j=>{console.log(j)
+		for(let i in data[1]){console.log(data[1][i])
+			let p=`<div class="rooms">
+			<p class ="room" id="${data[1][i].num}">${JSON.stringify(data[1][i])}</p>
+			<button class="" onclick="edit_r(this)">Забронировать</button>
+			<button class="" onclick="edit_r(this)">Изменить</button>
+			<button class="" onclick="edit_r(this)">Удалить</button>
+			</div>
+			`
+			show_room.insertAdjacentHTML('beforeend',p)
+		}
+		/* data[1].forEach(j=>{console.log(j)
 			let p=`<div class="rooms">
 				<p class ="room" id="${j['num']}">№ - ${j['num']}; цена - ${j['price']}; мест - ${j['bad']}; категория - ${j['cat']}; статус - ${j['stat']}; описание - ${j['descr']}</p>
 				<button class="" onclick="edit_r(this)">Забронировать</button>
@@ -27,7 +37,7 @@ socket.on('get_data',(data)=>{console.log(data)
 				</div>
 				`
 				show_room.insertAdjacentHTML('beforeend',p)
-		})	
+		})	 */
 	}		
 	else if(data[0]==='kl_data'){
 		for(let i in data[1]){console.log(data[1][i])
