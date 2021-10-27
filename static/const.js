@@ -143,7 +143,16 @@ add_r=`
 
 show_r=`
 <div id="show_room"></div>
+`,
+
+dupl_inf=`
+<div id="d_inf">
+    <p>Уже существует</p>
+    <button class="buttons" onclick="closes()">Закрыть</button>
+</div>
 `
+function closes(){console.log(33);let d=document.getElementById('d_inf');console.log(d); if(d){d.remove()}}
+
 function edit_r(el){console.log(el.parentElement);
     let e=el.parentElement
     socket.emit('edit_data',[el.textContent,e.querySelector('p').className ,e.querySelector('p').id])

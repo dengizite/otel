@@ -45,7 +45,8 @@ P{max-width:90%;padding:0.5rem 1rem;}
 #rounds{text-align: center;word-spacing: 2rem;height: 35%;overflow: auto;margin-top: 3.5rem;}
 #round_child_1{font-size: 1.2rem;}
 
-#add_room,#log_form{position:absolute;background-color:#DCDCDC;left: 50%;transform: translate(-50%, 0);bottom:40%;width:80%;height:50%;z-index:3}
+#add_room,#log_form,#d_inf{position:absolute;background-color:#DCDCDC;left: 50%;transform: translate(-50%, 0);bottom:40%;width:80%;height:50%;z-index:3}
+#d_inf,#log_form{display: grid;justify-items: center;align-items: center;}
 INPUT{width: 12rem;}
 #add_room_bed,#add_room_cat{width: 6rem;}
 #add_descr_room {width:80%;height: 60%;}

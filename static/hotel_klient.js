@@ -53,6 +53,10 @@ socket.on('get_data',(data)=>{console.log(data)
 	}
 })
 
+socket.on('send_data',(data)=>{
+	main_div.insertAdjacentHTML('beforeend',dupl_inf)
+})
+
 socket.on('chat',(data)=>{console.log(data)})
 
 document.addEventListener('DOMContentLoaded',(e)=>{

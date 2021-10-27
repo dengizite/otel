@@ -17,8 +17,13 @@ async function con_mongo(){
 };
 con_mongo()
 
-function catch_err(err){console.log(195,err.message);if(err.message.includes('must be connected')===true){con_mongo()}}
-async function insrt_user(a,b){b.insertOne(a)}
+function catch_err(err,id){console.log(195,err.message);
+	if(err.message.includes('must be connected')===true){con_mongo()}
+	else if(err.message.includes('E11000')===true){console.log('!!!!')
+		io.to(id).emit('send_data','duplicate')
+	}
+}
+async function insrt_user(a,b){return b.insertOne(a)}
 async function find(a,b){return b.find(a,{projection:{_id:0}}).toArray()}
 async function del(a,b){b.deleteOne(a)}
 //async function find(){return dbRooms.find({'bad':'1'},{projection:{_id:0}}).toArray()}
@@ -73,12 +78,12 @@ io.on('connection', (socket) => {
 		if(data[0]==='add_client'){
 			insrt_user({'name':data[1],'fam':data[2],'pass':data[3],'ident':data[4],'tel':data[5]},dbUsers)
 			.then((resp)=>{console.log(resp)})
-			.catch(err=>{catch_err(err)})
+			.catch(err=>{catch_err(err,socket.id)})
 		}
 		else if(data[0]==='add_room'){				
 			insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'stat':'Cвободен'},dbRooms)
 			.then((resp)=>{console.log(resp)})
-			.catch(err=>{catch_err(err)})
+			.catch(err=>{catch_err(err,socket.id)})
 		}
 	})
 
