@@ -25,7 +25,7 @@ select{font-size:1rem;}
 P{max-width:90%;padding:0.5rem 1rem;}
 #text_info{position: absolute;max-height:100%;overflow: auto;top: 0;background-color: black;top: 0.3rem;left: 0;}
 .headline{text-align: center;font-size:1.5rem;margin-top: 3rem;}
-.m_m_child{max-width: 20%;margin: 0.5rem -1.5rem 1rem 5%;}
+.m_m_child{max-width: 20%;margin:1rem;color: black;}
 .m_m_value{font-size:1.5rem;display:grid;text-align:center;grid-template-columns:1fr 1fr 1fr;align-items:center;margin-bottom:0;}
 #turtle,#drum{text-align: left}
 #rocket,#violin{text-align: right}
@@ -45,7 +45,7 @@ P{max-width:90%;padding:0.5rem 1rem;}
 #rounds{text-align: center;word-spacing: 2rem;height: 35%;overflow: auto;margin-top: 3.5rem;}
 #round_child_1{font-size: 1.2rem;}
 
-#add_room,#log_form,#d_inf{position:absolute;background-color:#DCDCDC;left: 50%;transform: translate(-50%, 0);bottom:40%;width:80%;height:50%;z-index:3}
+#add_room,#log_form,#d_inf,#wind_b{position:absolute;background-color:#DCDCDC;left: 50%;transform: translate(-50%, 0);bottom:40%;width:80%;height:50%;z-index:3}
 #d_inf,#log_form{display: grid;justify-items: center;align-items: center;}
 INPUT{width: 12rem;}
 #add_room_bed,#add_room_cat{width: 6rem;}

@@ -27,17 +27,38 @@ function login(el){
 }
 
 function send_log(el){	
-	if(el.textContent==='Регистрация'||el.textContent==='Добавить'){const num=/[^0-9]/gi,txt=/[^a-zа-яё0-9]/gi
+	if(el.textContent==='Регистрация'||el.textContent==='Добавить'||el.textContent==='Изменить'){
+        const num=/[^0-9]/gi,txt=/[^a-zа-яё0-9]/gi
         if(new_name.value===""||txt.test(new_name.value)===true){alert('Заполните поле "Имя" - только буквы и цифры')}
         else if(new_fam.value===""||txt.test(new_fam.value)===true){alert('Заполните поле "Фамилия" - только буквы и цифры')}
         else if(new_pass.value===""||txt.test(new_pass.value)===true){alert('Заполните поле "Пароль" - только буквы и цифры')}
         else if(new_ident.value===""||num.test(new_ident.value)===true){alert('Заполните поле "Паспорт" - только цифры')}
         else if(new_tel.value===""||num.test(new_tel.value)===true){alert('Заполните поле "Телефон" - только цифры')}
-        else {let w
-            if(el.textContent==='Регистрация'){w='check_in'}
-            else if(el.textContent==='Добавить'){w='send_data'}		    
-             socket.emit(w,['add_client',new_name.value,new_fam.value,new_pass.value,new_ident.value,new_tel.value]);let e=document.getElementById('log_form');if (e){e.remove()}
-            
+        else {let w,c
+            if(el.textContent==='Регистрация'){w='check_in';c='add_client'}
+            else if(el.textContent==='Добавить'){w='send_data';c='add_client'}
+            else if(el.textContent==='Изменить'){w='send_data';c='change_client'}	
+            socket.emit(w,[c,new_name.value,new_fam.value,new_pass.value,new_ident.value,new_tel.value]);
+            if(el.textContent==='Добавить'){let s=document.getElementById('show_room')
+                if(s){
+                    let d=JSON.stringify({"name":new_name.value,"fam":new_fam.value,"pass":new_pass.value,"ident":new_ident.value,"tel":new_tel.value}),
+                    p=`<div class="rooms">
+                    <p class ="room" id="${new_ident.value}">${d}</p>
+                    <button class="" onclick="edit_r(this)">Бронирования</button>
+                    <button class="" onclick="edit_r(this)">Изменить</button>
+                    <button class="" onclick="edit_r(this)">Удалить</button>
+                    </div>
+                    `
+                    s.insertAdjacentHTML('afterbegin',p)
+                }           
+            }
+            else if(el.textContent==='Изменить'){
+                let s=document.getElementById(new_ident.value);
+                if(s){                    
+                    s.textContent=JSON.stringify({"name":new_name.value,"fam":new_fam.value,"pass":new_pass.value,"ident":new_ident.value,"tel":new_tel.value})
+                }           
+            }
+            let e=document.getElementById('log_form');if (e){e.remove()}            
         }
 	}
 	else if(el.textContent==='Вход'){const txt=/[^a-zа-яё0-9]/gi
@@ -151,28 +172,31 @@ dupl_inf=`
     <button class="buttons" onclick="closes()">Закрыть</button>
 </div>
 `
-function closes(){console.log(33);let d=document.getElementById('d_inf');console.log(d); if(d){d.remove()}}
+function closes(){let d=document.getElementById('d_inf');if(d){d.remove()}}
 
 function edit_r(el){console.log(el.parentElement);
-    let e=el.parentElement
-    socket.emit('edit_data',[el.textContent,e.querySelector('p').className ,e.querySelector('p').id])
-    if(el.textContent==='Удалить'){e.remove()}
-    else if(el.textContent==='Изменить'){
-        if(e.querySelector('p').className==='user'){
-            let d=JSON.parse(e.querySelector('p').textContent);console.log(d)
-            main_div.insertAdjacentHTML('beforeend',window_reg);but_reg.textContent='Изменить'
-            new_name.value=d.name;new_fam.value=d.fam;new_pass.value=d.pass;
-            new_ident.value=d.ident;new_tel.value=d.tel;
-            
-        }
-        else if(e.querySelector('p').className==='room'){
-            let d=JSON.parse(e.querySelector('p').textContent);console.log(d)
-            main_div.insertAdjacentHTML('beforeend',add_r);but_reg.textContent='Изменить'
-            add_number.value=d.num;add_price.value=d.price;add_room_bed.value=d.bad;
-            add_room_cat.value=d.cat;add_descr_room.textContent=d.descr;
+    let w=document.getElementById('wind_b')
+    if(!w){
+        let e=el.parentElement
+        socket.emit('edit_data',[el.textContent,e.querySelector('p').className ,e.querySelector('p').id])
+        if(el.textContent==='Удалить'){e.remove()}
+        else if(el.textContent==='Изменить'){
+            if(e.querySelector('p').className==='user'){
+                let d=JSON.parse(e.querySelector('p').textContent);console.log(d)
+                main_div.insertAdjacentHTML('beforeend',window_reg);but_reg.textContent='Изменить'
+                new_name.value=d.name;new_fam.value=d.fam;new_pass.value=d.pass;
+                new_ident.value=d.ident;new_tel.value=d.tel;
+                new_ident.disabled=true
+            }
+            else if(e.querySelector('p').className==='room'){
+                let d=JSON.parse(e.querySelector('p').textContent);console.log(d)
+                main_div.insertAdjacentHTML('beforeend',add_r);but_reg.textContent='Изменить'
+                add_number.value=d.num;add_price.value=d.price;add_room_bed.value=d.bad;
+                add_room_cat.value=d.cat;add_descr_room.textContent=d.descr;
+                add_number.disabled=true
+            }
         }
     }
-
 }
 
 function kl_contr(el){
@@ -188,19 +212,37 @@ function rooms_contr(el){
 }
 
 function add_rooms(e){
-    if(e.textContent==='Добавить'){
+    if(e.textContent==='Добавить'||e.textContent==='Изменить'){
         const num=/[^0-9]/gi,txt=/[^a-zа-яё0-9]/gi
         if(add_number.value===""||txt.test(add_number.value)===true){alert('Заполните поле "№ комнаты" - только буквы и цифры')}
         else if(add_price.value===""||num.test(add_price.value)===true){alert('Заполните поле "цена" - только цифры')}
         else if(add_room_bed.value==="Мест"){alert('Укажите вместимость номера')}
         else if(add_room_cat.value==="Категория"){alert('Укажите категорию номера')}
         else {
-            socket.emit('send_data',['add_room',add_number.value,add_price.value,add_room_bed.value,add_room_cat.value,add_descr_room.value]);let el=document.getElementById('add_room');if (el){el.remove()}
+            let c;if(e.textContent==='Добавить'){c='add_room'}else{c='change_room'}
+            socket.emit('send_data',[c,add_number.value,add_price.value,add_room_bed.value,add_room_cat.value,add_descr_room.value])            
+            if(e.textContent==='Добавить'){let s=document.getElementById('show_room')
+                if(s){
+                    let d=JSON.stringify({"num":add_number.value,"price":add_price.value,"bad":add_room_bed.value,"cat":add_room_cat.value,"descr":add_descr_room.value,"stat":"Свободен"}),
+                    p=`<div class="rooms">
+                    <p class ="room" id="${add_number.value}">${d}</p>
+                    <button class="" onclick="edit_r(this)">Забронировать</button>
+                    <button class="" onclick="edit_r(this)">Изменить</button>
+                    <button class="" onclick="edit_r(this)">Удалить</button>
+                    </div>
+                    `
+                    s.insertAdjacentHTML('afterbegin',p)
+                }           
+            }
+            else if(e.textContent==='Изменить'){
+                let s=document.getElementById(add_number.value);
+                if(s){                    
+                    s.textContent=JSON.stringify({"num":add_number.value,"price":add_price.value,"bad":add_room_bed.value,"cat":add_room_cat.value,"descr":add_descr_room.value,"stat":"Свободен"})
+                }           
+            }
+            let el=document.getElementById('add_room');if (el){el.remove()}
         }
+        
     }
-    else if(e.textContent==='Закрыть'){console.log(add_number.value,add_price.value,add_room_bed.value,add_room_cat.value,add_descr_room.value);
-        let el=document.getElementById('add_room');if (el){el.remove()}}
+    else if(e.textContent==='Закрыть'){let el=document.getElementById('add_room');if (el){el.remove()}}
 }
-
-//<label class="m_m_child">c <input class="m_m_child" id="" type="date"></label>
-  //      <label class="m_m_child">до <input class="m_m_child" id="" type="date"></label>

@@ -24,17 +24,10 @@ function catch_err(err,id){console.log(195,err.message);
 	}
 }
 async function insrt_user(a,b){return b.insertOne(a)}
-async function find(a,b){return b.find(a,{projection:{_id:0}}).toArray()}
+async function find(a,b,c){return b.find(a,{projection:{_id:0}}).sort(c).toArray()}
 async function del(a,b){b.deleteOne(a)}
-//async function find(){return dbRooms.find({'bad':'1'},{projection:{_id:0}}).toArray()}
-
-/* 
-async function find_user(a,b){return dbRooms.findOne(a,b)}
-async function insrt_user(user){dbRooms.insertOne(user)}
-async function upd_user(user,upd_data){dbRooms.updateOne({[user]:{$exists:true}},upd_data)}
-find({},{projection:{_id:0,'TEST':1}}).toArray()
-dbase.find()
-*/
+//async function replaced(a,b,c){b.replaceOne(a,c)}
+async function upd(a,b,c){b.updateOne(a,c)}
 
 const app=express(),http=http_base.createServer(app),io=io_base(http),__dirname = path.resolve(),PORT=process.env.PORT||8080,clients={}
 app.use(express.static(".")); 
@@ -47,10 +40,18 @@ io.on('connection', (socket) => {
 	
 	socket.on ('check_in',(data)=>{console.log(64,data)
 		if(data[0]==='add_client'){
-			clients[data[2]]={name:data[1],pass:data[3],ident:data[4],tel:data[5]};console.log(65,clients)
-			io.to(socket.id).emit('check_in',['set_cookie',data[2],data[3],control_menu])
+			//clients[data[2]]={name:data[1],pass:data[3],ident:data[4],tel:data[5]};console.log(65,clients)
+			insrt_user({'name':data[1],'fam':data[2],'pass':data[3],'ident':data[4],'tel':data[5]},dbUsers)
+			.then((resp)=>{io.to(socket.id).emit('check_in',['set_cookie',data[2],data[3],control_menu])})
+			.catch(err=>{catch_err(err,socket.id)})			
 		}
-		else if(data[0]==='Вход'){io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],control_menu])}
+		else if(data[0]==='Вход'){
+			let q={'fam':data[1],'pass':data[2]}
+			find(q,dbUsers,{}).then((resp)=>{
+				if(resp.length!==0){io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],control_menu])}
+				else{io.to(socket.id).emit('check_in',['must_reg'])}
+			}).catch(err=>{catch_err(err)})
+		}
 		else if(data[0]==='check'){
 			io.to(socket.id).emit('check_in',['success_check',control_menu])
 		}
@@ -58,18 +59,19 @@ io.on('connection', (socket) => {
 
 	socket.on('get_data',(data)=>{console.log(49,data)
 		if(data[0]==='Бронирования'){console.log(data)}
-		else if(data[0]==='rooms_data'){let q={}
+		else if(data[0]==='rooms_data'){let q={},c
 			if(data[1]!=='Мест'){q['bad']=data[1]};if(data[2]!=='Категория'){q['cat']=data[2]}
 			if(data[3]!=='Доступность'){q['stat']=data[3]};			
-			find(q,dbRooms).then((resp)=>{console.log(54,resp);
+			if(data[4]==='дешевле'){c={'price':1}}else if(data[4]==='дороже'){c={'price':-1}}else{c={}}
+			find(q,dbRooms,c).then((resp)=>{console.log(54,resp);
 				io.to(socket.id).emit('get_data',['rooms_data',resp])
 			}).catch(err=>{catch_err(err)})
 		}
 		else if(data[0]==='kl_data'){			
 			let q={$or:[{'fam':{'$regex':data[1],'$options':'i'}},{'tel':{'$regex':data[1],'$options':'i'}}]}
-			find(q,dbUsers).then((resp)=>{console.log(64,resp);
+			find(q,dbUsers,{}).then((resp)=>{console.log(64,resp);
 				io.to(socket.id).emit('get_data',['kl_data',resp])
-			}).catch(err=>{catch_err(err)})			
+			}).catch(err=>{catch_err(err)})
 		}
 		else if(data[0]==='Отчеты'){console.log(data)}
 	})
@@ -80,8 +82,18 @@ io.on('connection', (socket) => {
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})
 		}
+		else if(data[0]==='change_client'){				
+			upd({'ident':data[4]},dbUsers,{$set:{'name':data[1],'fam':data[2],'pass':data[3],'tel':data[5]}})
+			.then((resp)=>{console.log(resp)})
+			.catch(err=>{catch_err(err,socket.id)})
+		}
 		else if(data[0]==='add_room'){				
 			insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'stat':'Cвободен'},dbRooms)
+			.then((resp)=>{console.log(resp)})
+			.catch(err=>{catch_err(err,socket.id)})
+		}
+		else if(data[0]==='change_room'){				
+			upd({'num':data[1]},dbRooms,{$set:{"price":Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5]}})
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})
 		}
@@ -100,11 +112,11 @@ io.on('connection', (socket) => {
 				.catch(err=>{catch_err(err)})
 			}
 		}
-	})
-
-	socket.on('chat',(msg)=>{console.log(11,msg)
+		if(data[0]==='Забронировать'){io.to(socket.id).emit('booking',[...data,wind_books])}
 	})
 })
+
+http.listen(PORT, () => {console.log('listening on *:80')})
 
 const control_menu=`<div id="adm_control" class="device_but">
 		<button class="buttons" onclick="get_data(this)">Бронирования</button>
@@ -119,7 +131,11 @@ user_menu=`<div id="adm_control" class="device_but">
 hotel_rooms=`<div id="adm_control" class="device_but">
 		<button id="" class="buttons" onclick="get_data(this)">ЛК</button>
 		<button id="" class="buttons" onclick="get_data(this)">Номера</button>
-	</div>`
-
-http.listen(PORT, () => {console.log('listening on *:80')})
-
+	</div>`,
+wind_books=`<div id="wind_b">
+	<p id='book_r'></p>
+	<label class="m_m_child">c <input class="m_m_child" id="" type="date"></label>
+	<label class="m_m_child">до <input class="m_m_child" id="" type="date"></label>
+	<button class="buttons" onclick="">Подтвердить</button>
+	<button class="buttons" onclick="closes()">Закрыть</button>
+</div>`

@@ -8,9 +8,10 @@ socket.on('check_in', function(data){
 		if(a){a.remove()};if(b){b.remove()};main_div.insertAdjacentHTML('beforeend',data[3])
 
 	}
-	else if(data[0]==='success_check'){
-		main_div.insertAdjacentHTML('beforeend',data[1])
+	else if(data[0]==='must_reg'){b=document.getElementById('log_form');if(b){b.remove()}
+		main_div.insertAdjacentHTML('beforeend',window_reg)
 	}
+	else if(data[0]==='success_check'){main_div.insertAdjacentHTML('beforeend',data[1])}
 
 })
 
@@ -54,7 +55,17 @@ socket.on('get_data',(data)=>{console.log(data)
 })
 
 socket.on('send_data',(data)=>{
+	let n_c=data_from_cookie('user=');
+	if(!n_c){let b=document.getElementById('reg_b')
+		if(b){b.style.display='flex'}
+		else{main_div.insertAdjacentHTML('beforeend',reg_butt)}
+	}
 	main_div.insertAdjacentHTML('beforeend',dupl_inf)
+})
+
+socket.on('booking',(data)=>{console.log(data)
+	main_div.insertAdjacentHTML('beforeend',data[3])
+	book_r.textContent='Забронировать номер '+data[2]+' на даты:'
 })
 
 socket.on('chat',(data)=>{console.log(data)})
