@@ -168,11 +168,24 @@ show_r=`
 
 dupl_inf=`
 <div id="d_inf">
+<div
     <p>Уже существует</p>
-    <button class="buttons" onclick="closes()">Закрыть</button>
+    <button class="buttons" onclick="closes(this)">Закрыть</button>
+    </div>
 </div>
 `
-function closes(){let d=document.getElementById('d_inf');if(d){d.remove()}}
+function closes(el){el.parentElement.parentElement.remove()}
+
+function send_book(){
+    const s=list_user.childNodes,c=[]
+    s.forEach(i=>c.push(i.value))
+    if(c.includes(select_user.value)===false){alert('Выберите клиента из выпадающего списка')}
+    else if(end_data.valueAsNumber-start_data.valueAsNumber<86400000||start_data.valueAsNumber<Date.now()){alert('Выберите верные даты')}
+    else{
+        socket.emit('booking',['rooms_data',start_data.valueAsNumber,end_data.valueAsNumber,select_user.value,book_r.textContent.split(' ')[2]])
+        wind_b.remove()
+    }   
+}
 
 function edit_r(el){console.log(el.parentElement);
     let w=document.getElementById('wind_b')

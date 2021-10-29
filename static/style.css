@@ -25,7 +25,7 @@ select{font-size:1rem;}
 P{max-width:90%;padding:0.5rem 1rem;}
 #text_info{position: absolute;max-height:100%;overflow: auto;top: 0;background-color: black;top: 0.3rem;left: 0;}
 .headline{text-align: center;font-size:1.5rem;margin-top: 3rem;}
-.m_m_child{max-width: 20%;margin:1rem;color: black;}
+
 .m_m_value{font-size:1.5rem;display:grid;text-align:center;grid-template-columns:1fr 1fr 1fr;align-items:center;margin-bottom:0;}
 #turtle,#drum{text-align: left}
 #rocket,#violin{text-align: right}
@@ -44,10 +44,13 @@ P{max-width:90%;padding:0.5rem 1rem;}
 #round_head {display: grid;grid-template-columns:28% 26% 46%;;padding-top: 1rem;font-size: 1.5rem;align-items: end;}
 #rounds{text-align: center;word-spacing: 2rem;height: 35%;overflow: auto;margin-top: 3.5rem;}
 #round_child_1{font-size: 1.2rem;}
-
-#add_room,#log_form,#d_inf,#wind_b{position:absolute;background-color:#DCDCDC;left: 50%;transform: translate(-50%, 0);bottom:40%;width:80%;height:50%;z-index:3}
-#d_inf,#log_form{display: grid;justify-items: center;align-items: center;}
 INPUT{width: 12rem;}
+#add_room,#log_form,#d_inf,#wind_b{position:absolute;background-color:#DCDCDC;left: 50%;transform: translate(-50%, 0);bottom:40%;width:80%;height:50%;z-index:3;border:0.5rem groove darkgrey;border-radius:1rem;color: black}
+#d_inf,#log_form{display: grid;justify-items: center;align-items: center;}
+#wind_b{display:grid;padding-left: 0.5rem;grid-template-rows: 1fr 1fr 4fr 1fr;}
+.m_child{width: min-content;}
+datalist{overflow: auto;}
+
 #add_room_bed,#add_room_cat{width: 6rem;}
 #add_descr_room {width:80%;height: 60%;}
 #show_room{position: absolute;width: 70%;left: 50%;transform: translate(-50%, 0);text-align:center;word-spacing:2rem;height: 50%;overflow:auto;margin-top:1rem;}

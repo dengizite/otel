@@ -66,6 +66,11 @@ socket.on('send_data',(data)=>{
 socket.on('booking',(data)=>{console.log(data)
 	main_div.insertAdjacentHTML('beforeend',data[3])
 	book_r.textContent='Забронировать номер '+data[2]+' на даты:'
+	let s=''
+	data[4].forEach(i=>{s=s+`<option value="${i.fam} ${i.ident}">`});
+	s=s+'</option>'
+	list_user.innerHTML=s
+	start_data.valueAsNumber=Date.now()+86400000;end_data.valueAsNumber=Date.now()+172800000	
 })
 
 socket.on('chat',(data)=>{console.log(data)})

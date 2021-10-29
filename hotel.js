@@ -24,7 +24,8 @@ function catch_err(err,id){console.log(195,err.message);
 	}
 }
 async function insrt_user(a,b){return b.insertOne(a)}
-async function find(a,b,c){return b.find(a,{projection:{_id:0}}).sort(c).toArray()}
+//async function find(a,b,c,d){return b.find(a,{projection:{_id:0}}).sort(c).toArray()}
+async function find(a,b,c,d){return b.find(a,{projection:d}).sort(c).toArray()}
 async function del(a,b){b.deleteOne(a)}
 //async function replaced(a,b,c){b.replaceOne(a,c)}
 async function upd(a,b,c){b.updateOne(a,c)}
@@ -47,7 +48,7 @@ io.on('connection', (socket) => {
 		}
 		else if(data[0]==='Вход'){
 			let q={'fam':data[1],'pass':data[2]}
-			find(q,dbUsers,{}).then((resp)=>{
+			find(q,dbUsers,{},{_id:0}).then((resp)=>{
 				if(resp.length!==0){io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],control_menu])}
 				else{io.to(socket.id).emit('check_in',['must_reg'])}
 			}).catch(err=>{catch_err(err)})
@@ -63,13 +64,13 @@ io.on('connection', (socket) => {
 			if(data[1]!=='Мест'){q['bad']=data[1]};if(data[2]!=='Категория'){q['cat']=data[2]}
 			if(data[3]!=='Доступность'){q['stat']=data[3]};			
 			if(data[4]==='дешевле'){c={'price':1}}else if(data[4]==='дороже'){c={'price':-1}}else{c={}}
-			find(q,dbRooms,c).then((resp)=>{console.log(54,resp);
+			find(q,dbRooms,c,{_id:0}).then((resp)=>{console.log(54,resp);
 				io.to(socket.id).emit('get_data',['rooms_data',resp])
 			}).catch(err=>{catch_err(err)})
 		}
 		else if(data[0]==='kl_data'){			
 			let q={$or:[{'fam':{'$regex':data[1],'$options':'i'}},{'tel':{'$regex':data[1],'$options':'i'}}]}
-			find(q,dbUsers,{}).then((resp)=>{console.log(64,resp);
+			find(q,dbUsers,{},{_id:0}).then((resp)=>{console.log(64,resp);
 				io.to(socket.id).emit('get_data',['kl_data',resp])
 			}).catch(err=>{catch_err(err)})
 		}
@@ -112,8 +113,15 @@ io.on('connection', (socket) => {
 				.catch(err=>{catch_err(err)})
 			}
 		}
-		if(data[0]==='Забронировать'){io.to(socket.id).emit('booking',[...data,wind_books])}
+		else if(data[0]==='Забронировать'){
+			find({},dbUsers,{},{_id:0,'fam':1,'ident':1}).then((resp)=>{io.to(socket.id).emit('booking',[...data,wind_books,resp])
+			}).catch(err=>{catch_err(err)})
+			
+		}
 	})
+
+	socket.on('booking',(data)=>{console.log(123,data)
+			})
 })
 
 http.listen(PORT, () => {console.log('listening on *:80')})
@@ -134,8 +142,17 @@ hotel_rooms=`<div id="adm_control" class="device_but">
 	</div>`,
 wind_books=`<div id="wind_b">
 	<p id='book_r'></p>
-	<label class="m_m_child">c <input class="m_m_child" id="" type="date"></label>
-	<label class="m_m_child">до <input class="m_m_child" id="" type="date"></label>
-	<button class="buttons" onclick="">Подтвердить</button>
-	<button class="buttons" onclick="closes()">Закрыть</button>
+		<div id="dates">
+			<label class="m_child">c <input class="m_child" id="start_data" type="date"></label>
+			<label class="m_child">до <input class="m_child" id="end_data" type="date"></label>
+		</div>
+		<div>
+			<label for="sel_user">Выберите на кого бронировать:</label>
+			<input list="list_user" id="select_user" name="sel_user"/>
+			<datalist id="list_user"></datalist>
+		</div>
+	<div>
+	<button class="buttons" onclick="send_book()">Подтвердить</button>
+	<button class="buttons" onclick="closes(this)">Закрыть</button>
+	</div>
 </div>`
