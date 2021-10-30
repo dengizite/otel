@@ -13,6 +13,8 @@ html {-webkit-tap-highlight-color: rgba(0,0,0,0) !important; -webkit-tap-highlig
 .control_but{opacity:1;font-weight:900;}
 
 .device_but{display:flex;justify-content: space-around;margin-top:1rem;}
+.room_c{margin:0.2rem;}
+#child_dev_but{text-align: center;}
 #device_time,#device_sec{display: grid; grid-template-columns: 1fr 1fr 1fr;justify-items: center;align-items: center;}
 
 #timer_time{width: 6.2rem;font-size: 1rem;border-radius: 5%;outline: none;border: none;}

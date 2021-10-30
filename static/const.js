@@ -98,30 +98,34 @@ const  booking_c=`
 
 rooms_c=`
 <div id="rooms_control">
-    <div class="device_but">        
-        <select class="" id="room_bed">
-            <option selected value="Мест">Мест</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="4">4</option>            
-        </select>
-        <select class="" id="room_cat">
-            <option selected value="Категория">Категория</option>
-            <option value="Люкс">Люкс</option>
-            <option value="Стандарт">Стандарт</option>
-            <option value="Эконом">Эконом</option>            
-        </select>
-        <select class="" id="room_avail">
-            <option selected value="Доступность">Доступность</option>
-            <option value="Свободен">Свободен</option>
-            <option value="Забронирован">Забронирован</option>
-            <option value="Заселен">Заселен</option>            
-        </select>
-        <select class="" id="room_sort">
-            <option selected value="Сортировка">Сортировка</option>
-            <option value="дешевле">Сначала дешевле</option>
-            <option value="дороже">Сначала дороже</option>                     
-        </select>
+    <div class="device_but">
+        <div id="child_dev_but">
+            <select class="room_c" id="room_bed">
+                <option selected value="Мест">Мест</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="4">4</option>            
+            </select>
+            <select class="room_c" id="room_cat">
+                <option selected value="Категория">Категория</option>
+                <option value="Люкс">Люкс</option>
+                <option value="Стандарт">Стандарт</option>
+                <option value="Эконом">Эконом</option>            
+            </select>
+            <select class="room_c" id="room_avail">
+                <option selected value="Доступность">Доступность</option>
+                <option value="Свободен">Свободен</option>
+                <option value="Забронирован">Забронирован</option>
+                <option value="Заселен">Заселен</option>            
+            </select>
+            <select class="room_c" id="room_sort">
+                <option selected value="Сортировка">Сортировка</option>
+                <option value="дешевле">Сначала дешевле</option>
+                <option value="дороже">Сначала дороже</option>                     
+            </select>            
+			<label class="m_child room_c">c <input class="m_child room_c" id="start_d" type="date"></label>
+			<label class="m_child room_c">до <input class="m_child room_c" id="end_d" type="date"></label>		
+        </div>
     </div>
     <div class="device_but">
         <button class="buttons" onclick="rooms_contr(this)">Применить</button>

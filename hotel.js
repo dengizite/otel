@@ -89,7 +89,7 @@ io.on('connection', (socket) => {
 			.catch(err=>{catch_err(err,socket.id)})
 		}
 		else if(data[0]==='add_room'){				
-			insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'stat':'Cвободен'},dbRooms)
+			insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'stat':'Cвободен','start':0,'end':0},dbRooms)
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})
 		}
