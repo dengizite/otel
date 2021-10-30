@@ -94,7 +94,16 @@ function get_data(el){const els=['booking_control','rooms_control','kl_control',
 }
 
 const  booking_c=`
-<div id="booking_control"></div>`,
+<div class="device_but" id="booking_control">
+    <div id="child_dev_but">
+        <input type="text" maxlength="25" id="search_r" placeholder="Номер комнаты"/>
+        <input type="text" maxlength="25" id="search_kl" placeholder="Фамилия клиента"/>
+        <label class="m_child room_c">c <input class="m_child room_c" id="start_d" type="date"></label>
+        <label class="m_child room_c">до <input class="m_child room_c" id="end_d" type="date"></label>
+        <button class="buttons" onclick="book_contr()">Найти</button>
+    </div>
+    <div id="book_list" class="device_but"></div>
+</div>`,
 
 rooms_c=`
 <div id="rooms_control">
@@ -131,7 +140,7 @@ rooms_c=`
         <button class="buttons" onclick="rooms_contr(this)">Применить</button>
         <button class="buttons" onclick="rooms_contr(this)">Добавить</button>
     </div>
-    <div id="rooms_list" class="device_but"></div>   
+    <div id="rooms_list" class="device_but"></div>
 </div>`,
 
 klient_c=`
@@ -180,13 +189,18 @@ dupl_inf=`
 `
 function closes(el){el.parentElement.parentElement.remove()}
 
+function count(){
+    sum.textContent=(end_data.valueAsNumber-start_data.valueAsNumber)/1000/60/60/24*Number(price_num.value)   
+}
+
 function send_book(){
-    const s=list_user.childNodes,c=[]
+    const s=list_user.childNodes,c=[],num=/[^0-9]/gi
     s.forEach(i=>c.push(i.value))
     if(c.includes(select_user.value)===false){alert('Выберите клиента из выпадающего списка')}
     else if(end_data.valueAsNumber-start_data.valueAsNumber<86400000||start_data.valueAsNumber<Date.now()){alert('Выберите верные даты')}
+    else if(num.test(price_num.value)===true){alert('Укажите цену - только цифры')}
     else{
-        socket.emit('booking',['rooms_data',start_data.valueAsNumber,end_data.valueAsNumber,select_user.value,book_r.textContent.split(' ')[2]])
+        socket.emit('send_data',['set_book',book_r.textContent.split(' ')[2],select_user.value.split(' ')[0],select_user.value.split(' ')[1],start_data.valueAsNumber,end_data.valueAsNumber,sum.textContent])
         wind_b.remove()
     }   
 }
@@ -194,19 +208,17 @@ function send_book(){
 function edit_r(el){console.log(el.parentElement);
     let w=document.getElementById('wind_b')
     if(!w){
-        let e=el.parentElement
-        socket.emit('edit_data',[el.textContent,e.querySelector('p').className ,e.querySelector('p').id])
+        let e=el.parentElement, d=JSON.parse(e.querySelector('p').textContent)
+        socket.emit('edit_data',[el.textContent,e.querySelector('p').className ,e.querySelector('p').id,d.price])
         if(el.textContent==='Удалить'){e.remove()}
         else if(el.textContent==='Изменить'){
-            if(e.querySelector('p').className==='user'){
-                let d=JSON.parse(e.querySelector('p').textContent);console.log(d)
+            if(e.querySelector('p').className==='user'){              
                 main_div.insertAdjacentHTML('beforeend',window_reg);but_reg.textContent='Изменить'
                 new_name.value=d.name;new_fam.value=d.fam;new_pass.value=d.pass;
                 new_ident.value=d.ident;new_tel.value=d.tel;
                 new_ident.disabled=true
             }
-            else if(e.querySelector('p').className==='room'){
-                let d=JSON.parse(e.querySelector('p').textContent);console.log(d)
+            else if(e.querySelector('p').className==='room'){               
                 main_div.insertAdjacentHTML('beforeend',add_r);but_reg.textContent='Изменить'
                 add_number.value=d.num;add_price.value=d.price;add_room_bed.value=d.bad;
                 add_room_cat.value=d.cat;add_descr_room.textContent=d.descr;
@@ -214,6 +226,10 @@ function edit_r(el){console.log(el.parentElement);
             }
         }
     }
+}
+
+function book_contr(){
+    socket.emit('get_data',['book_data',search_r.value,search_kl.value,start_d.valueAsNumber,end_d.valueAsNumber])
 }
 
 function kl_contr(el){

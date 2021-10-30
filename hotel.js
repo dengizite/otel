@@ -46,24 +46,25 @@ io.on('connection', (socket) => {
 			.then((resp)=>{io.to(socket.id).emit('check_in',['set_cookie',data[2],data[3],control_menu])})
 			.catch(err=>{catch_err(err,socket.id)})			
 		}
-		else if(data[0]==='Вход'){
+		else{
 			let q={'fam':data[1],'pass':data[2]}
 			find(q,dbUsers,{},{_id:0}).then((resp)=>{
 				if(resp.length!==0){io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],control_menu])}
 				else{io.to(socket.id).emit('check_in',['must_reg'])}
 			}).catch(err=>{catch_err(err)})
 		}
-		else if(data[0]==='check'){
-			io.to(socket.id).emit('check_in',['success_check',control_menu])
-		}
 	})
 
 	socket.on('get_data',(data)=>{console.log(49,data)
-		if(data[0]==='Бронирования'){console.log(data)}
+		if(data[0]==='book_data'){
+			find({},dbBooks,{},{_id:0}).then((resp)=>{console.log(54,resp);
+				io.to(socket.id).emit('get_data',['rooms_data',resp])
+			}).catch(err=>{catch_err(err)})
+		}
 		else if(data[0]==='rooms_data'){let q={},c
 			if(data[1]!=='Мест'){q['bad']=data[1]};if(data[2]!=='Категория'){q['cat']=data[2]}
 			if(data[3]!=='Доступность'){q['stat']=data[3]};			
-			if(data[4]==='дешевле'){c={'price':1}}else if(data[4]==='дороже'){c={'price':-1}}else{c={}}
+			if(data[4]==='дешевле'){c={'price':1}}else if(data[4]==='дороже'){c={'price':-1}}else{c={}}			
 			find(q,dbRooms,c,{_id:0}).then((resp)=>{console.log(54,resp);
 				io.to(socket.id).emit('get_data',['rooms_data',resp])
 			}).catch(err=>{catch_err(err)})
@@ -89,12 +90,17 @@ io.on('connection', (socket) => {
 			.catch(err=>{catch_err(err,socket.id)})
 		}
 		else if(data[0]==='add_room'){				
-			insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'stat':'Cвободен','start':0,'end':0},dbRooms)
+			insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'stat':'Свободен','start':0,'end':0},dbRooms)
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})
 		}
 		else if(data[0]==='change_room'){				
 			upd({'num':data[1]},dbRooms,{$set:{"price":Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5]}})
+			.then((resp)=>{console.log(resp)})
+			.catch(err=>{catch_err(err,socket.id)})
+		}
+		else if(data[0]==='set_book'){							
+			insrt_user({'room':data[1],'fam':data[2],'pasp':data[3],'start':data[4],'end':data[5],'sum':Number(data[6])},dbBooks)
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})
 		}
@@ -119,9 +125,6 @@ io.on('connection', (socket) => {
 			
 		}
 	})
-
-	socket.on('booking',(data)=>{console.log(123,data)
-			})
 })
 
 http.listen(PORT, () => {console.log('listening on *:80')})
@@ -142,17 +145,22 @@ hotel_rooms=`<div id="adm_control" class="device_but">
 	</div>`,
 wind_books=`<div id="wind_b">
 	<p id='book_r'></p>
-		<div id="dates">
-			<label class="m_child">c <input class="m_child" id="start_data" type="date"></label>
-			<label class="m_child">до <input class="m_child" id="end_data" type="date"></label>
-		</div>
-		<div>
-			<label for="sel_user">Выберите на кого бронировать:</label>
-			<input list="list_user" id="select_user" name="sel_user"/>
-			<datalist id="list_user"></datalist>
-		</div>
+	<div id="dates">
+		<label class="m_child">c <input class="m_child" id="start_data" type="date" onblur="count()"></label>
+		<label class="m_child">до <input class="m_child" id="end_data" type="date" onblur="count()"></label>
+	</div>
 	<div>
-	<button class="buttons" onclick="send_book()">Подтвердить</button>
-	<button class="buttons" onclick="closes(this)">Закрыть</button>
+		<label for="sel_user">Выберите на кого бронировать:</label>
+		<input list="list_user" id="select_user" name="sel_user"/>
+		<datalist id="list_user"></datalist>
+	</div>
+	<div>
+		<label for="price_n">Цена за сутки:</label>
+		<input type="text" name="price_n" maxlength="10" id="price_num" onblur="count()"/>
+		<span>Итог: </span><span id="sum"></span>
+	</div>
+	<div>
+		<button class="buttons" onclick="send_book()">Подтвердить</button>
+		<button class="buttons" onclick="closes(this)">Закрыть</button>
 	</div>
 </div>`
