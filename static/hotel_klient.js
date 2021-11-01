@@ -19,18 +19,16 @@ socket.on('get_data',(data)=>{console.log(data)
 	let a=document.getElementById('show_room');if(a){a.remove()}
 	main_div.insertAdjacentHTML('beforeend',show_r)
 	if(data[0]==='book_data'){
-		data[1].forEach(i=>{
-			for(let j in i.books){console.log(j,i.books[j])
-				i.books[j].start=new Date(i.books[j].start).toDateString()
-				i.books[j].end=new Date(i.books[j].end).toDateString()
+		data[1].forEach(i=>{console.log(i.bookss.v)
+			i.bookss.v.start=new Date(i.bookss.v.start).toDateString()
+				i.bookss.v.end=new Date(i.bookss.v.end).toDateString()
 				let p=`<div class="rooms">
-					<p class ="book" id="${i.books[j].room}_${i.books[j].num_book}">${JSON.stringify(i.books[j])}</p>
+					<p class ="book" id="${i.bookss.v.room}_${i.bookss.v.num_book}">${JSON.stringify(i.bookss.v)}</p>
 					<button class="buttons" onclick="edit_r(this)">Подтвердить</button>
 					<button class="buttons" onclick="edit_r(this)">Отменить</button>
 				</div>
 				`
-				show_room.insertAdjacentHTML('beforeend',p)
-			}
+				show_room.insertAdjacentHTML('beforeend',p)			
 		})
 	}
 	else if(data[0]==='rooms_data'){

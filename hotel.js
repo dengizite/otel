@@ -18,7 +18,7 @@ async function con_mongo(){
 async function count_books(){
 	return dbRooms.aggregate([{$project:{_id: null,bookss:{$objectToArray:"$books"}}},{ $unwind:"$bookss"}]).toArray()
 }
-let count=1
+let count
 con_mongo().then(()=>count_books()
 .then((resp)=>{count=resp.length+1;console.log(count)}).catch(err=>{catch_err(err)}))
 
@@ -48,8 +48,7 @@ io.on('connection', (socket) => {
 	socket.on ('disconnect',(data)=>{console.log (socket.id, 'conn fail')})
 	
 	socket.on ('check_in',(data)=>{console.log(64,data)
-		if(data[0]==='add_client'){
-			//clients[data[2]]={name:data[1],pass:data[3],ident:data[4],tel:data[5]};console.log(65,clients)
+		if(data[0]==='add_client'){			
 			insrt_user({'name':data[1],'fam':data[2],'pass':data[3],'ident':data[4],'tel':data[5]},dbUsers)
 			.then((resp)=>{io.to(socket.id).emit('check_in',['set_cookie',data[2],data[3],control_menu])})
 			.catch(err=>{catch_err(err,socket.id)})			
@@ -64,20 +63,16 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('get_data',(data)=>{console.log(49,data)
-		if(data[0]==='book_data'){
-			//let q={'room':{'$regex':data[1],'$options':'i'},'fam':{'$regex':data[2],'$options':'i'}}
-			//if(data[3]){q['start']={$gte:data[3]}};if(data[4]){q['end']={$lt:data[4]}}
-			//let q={'books':{$gt:[]}}
-			let a={}			
-			//{"bookss.v.room":{'$regex':'2','$options':'i'},"bookss.v.fam":{'$regex':'Ко','$options':'i'}}
+		if(data[0]==='book_data'){let a={}
+			if(data[1]){let b=`bookss.v.room`;a[b]={'$regex':data[1],'$options':'i'}}
+			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
+			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
+			if(data[3]&&data[4]){let b=`bookss.v.start`;a[b]={$gte:data[3],$lt:data[4]}}
+			else if(data[3]&&!data[4]){let b=`bookss.v.start`;a[b]={$gte:data[3]}}
+			else if(!data[3]&&data[4]){let b=`bookss.v.start`;a[b]={$lt:data[4]}}		
 			aggr_find(a).then((resp)=>{console.log(54,resp);
 				io.to(socket.id).emit('get_data',['book_data',resp])
-			}).catch(err=>{catch_err(err)})
-			//let q={books:{$exists:true,$ne:{}}}
-			//if(data[1]){console.log(67,q)}
-			/* find(q,dbRooms,{},{_id:0,'books':1}).then((resp)=>{console.log(54,resp);
-				io.to(socket.id).emit('get_data',['book_data',resp])
-			}).catch(err=>{catch_err(err)}) */
+			}).catch(err=>{catch_err(err)})	
 		}
 		else if(data[0]==='rooms_data'){let q={},c
 			if(data[1]!=='Мест'){q['bad']=data[1]};if(data[2]!=='Категория'){q['cat']=data[2]}
@@ -144,13 +139,14 @@ io.on('connection', (socket) => {
 			}).catch(err=>{catch_err(err)})			
 		}
 		else if(data[0]==='Подтвердить'){
-			let s=`books.${data[2].split('_')[1]}.stat`,q={'num':data[2].split('_')[0],s:'Ожидает'}
+			let s=`books.${data[2].split('_')[1]}.stat`,q={'num':data[2].split('_')[0],[s]:'Ожидает'}
 			upd(q,dbRooms,{$set:{[s]:'Подтверждено'}})
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})
 		}
 		else if(data[0]==='Отменить'){
-			let s=`books.${data[2].split('_')[1]}.stat`,q={'num':data[2].split('_')[0],s:'Ожидает'}
+			let s=`books.${data[2].split('_')[1]}.stat`,q={'num':data[2].split('_')[0],[s]:'Ожидает'}
+			console.log(153,s,q)
 			upd(q,dbRooms,{$set:{[s]:'Отменено'}})
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})
