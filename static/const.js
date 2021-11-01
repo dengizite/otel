@@ -101,8 +101,7 @@ const  booking_c=`
         <label class="m_child room_c">c <input class="m_child room_c" id="start_d" type="date"></label>
         <label class="m_child room_c">до <input class="m_child room_c" id="end_d" type="date"></label>
         <button class="buttons" onclick="book_contr()">Найти</button>
-    </div>
-    <div id="book_list" class="device_but"></div>
+    </div>    
 </div>`,
 
 rooms_c=`
@@ -139,8 +138,7 @@ rooms_c=`
     <div class="device_but">
         <button class="buttons" onclick="rooms_contr(this)">Применить</button>
         <button class="buttons" onclick="rooms_contr(this)">Добавить</button>
-    </div>
-    <div id="rooms_list" class="device_but"></div>
+    </div>   
 </div>`,
 
 klient_c=`
@@ -206,24 +204,32 @@ function send_book(){
 }
 
 function edit_r(el){console.log(el.parentElement);
-    let w=document.getElementById('wind_b')
+    let w=false; const e=['wind_b','log_form','edit_book','add_room']
+    e.forEach(i=>{if(document.getElementById(i)){w=true}})
     if(!w){
         let e=el.parentElement, d=JSON.parse(e.querySelector('p').textContent)
-        socket.emit('edit_data',[el.textContent,e.querySelector('p').className ,e.querySelector('p').id,d.price])
+        socket.emit('edit_data',[el.textContent,e.querySelector('p').className ,e.querySelector('p').id,d.price,Date.parse(d.start)+10800000,Date.parse(d.end)+10800000])
         if(el.textContent==='Удалить'){e.remove()}
         else if(el.textContent==='Изменить'){
-            if(e.querySelector('p').className==='user'){              
+            if(e.querySelector('p').className==='user'){
                 main_div.insertAdjacentHTML('beforeend',window_reg);but_reg.textContent='Изменить'
                 new_name.value=d.name;new_fam.value=d.fam;new_pass.value=d.pass;
                 new_ident.value=d.ident;new_tel.value=d.tel;
                 new_ident.disabled=true
             }
-            else if(e.querySelector('p').className==='room'){               
+            else if(e.querySelector('p').className==='room'){
                 main_div.insertAdjacentHTML('beforeend',add_r);but_reg.textContent='Изменить'
                 add_number.value=d.num;add_price.value=d.price;add_room_bed.value=d.bad;
                 add_room_cat.value=d.cat;add_descr_room.textContent=d.descr;
                 add_number.disabled=true
-            }
+            }          
+        }
+        else if(el.textContent==='Подтвердить'){
+            e.querySelector('p').textContent=e.querySelector('p').textContent.replace('Ожидает','Подтверждено')
+            
+        }
+        else if(el.textContent==='Отменить'){
+            e.querySelector('p').textContent=e.querySelector('p').textContent.replace('Ожидает','Отменено')
         }
     }
 }
@@ -240,7 +246,7 @@ function kl_contr(el){
 }
 
 function rooms_contr(el){
-    if(el.textContent==='Применить'){socket.emit('get_data',['rooms_data',room_bed.value,room_cat.value,room_avail.value,room_sort.value])}
+    if(el.textContent==='Применить'){socket.emit('get_data',['rooms_data',room_bed.value,room_cat.value,room_avail.value,room_sort.value,start_d.valueAsNumber,end_d.valueAsNumber])}
     else if(el.textContent==='Добавить'){main_div.insertAdjacentHTML('beforeend',add_r)}
 }
 

@@ -18,13 +18,28 @@ socket.on('check_in', function(data){
 socket.on('get_data',(data)=>{console.log(data)
 	let a=document.getElementById('show_room');if(a){a.remove()}
 	main_div.insertAdjacentHTML('beforeend',show_r)
-	if(data[0]==='rooms_data'){
+	if(data[0]==='book_data'){
+		data[1].forEach(i=>{
+			for(let j in i.books){console.log(j,i.books[j])
+				i.books[j].start=new Date(i.books[j].start).toDateString()
+				i.books[j].end=new Date(i.books[j].end).toDateString()
+				let p=`<div class="rooms">
+					<p class ="book" id="${i.books[j].room}_${i.books[j].num_book}">${JSON.stringify(i.books[j])}</p>
+					<button class="buttons" onclick="edit_r(this)">Подтвердить</button>
+					<button class="buttons" onclick="edit_r(this)">Отменить</button>
+				</div>
+				`
+				show_room.insertAdjacentHTML('beforeend',p)
+			}
+		})
+	}
+	else if(data[0]==='rooms_data'){
 		for(let i in data[1]){console.log(data[1][i])
 			let p=`<div class="rooms">
 			<p class ="room" id="${data[1][i].num}">${JSON.stringify(data[1][i])}</p>
-			<button class="" onclick="edit_r(this)">Забронировать</button>
-			<button class="" onclick="edit_r(this)">Изменить</button>
-			<button class="" onclick="edit_r(this)">Удалить</button>
+			<button class="buttons" onclick="edit_r(this)">Забронировать</button>
+			<button class="buttons" onclick="edit_r(this)">Изменить</button>
+			<button class="buttons" onclick="edit_r(this)">Удалить</button>
 			</div>
 			`
 			show_room.insertAdjacentHTML('beforeend',p)
@@ -44,9 +59,9 @@ socket.on('get_data',(data)=>{console.log(data)
 		for(let i in data[1]){console.log(data[1][i])
 			let p=`<div class="rooms">
 			<p class ="user" id="${data[1][i].ident}">${JSON.stringify(data[1][i])}</p>
-			<button class="" onclick="edit_r(this)">Бронирования</button>
-			<button class="" onclick="edit_r(this)">Изменить</button>
-			<button class="" onclick="edit_r(this)">Удалить</button>
+			<button class="buttons" onclick="edit_r(this)">Бронирования</button>
+			<button class="buttons" onclick="edit_r(this)">Изменить</button>
+			<button class="buttons" onclick="edit_r(this)">Удалить</button>
 			</div>
 			`
 			show_room.insertAdjacentHTML('beforeend',p)
@@ -64,10 +79,10 @@ socket.on('send_data',(data)=>{
 })
 
 socket.on('booking',(data)=>{console.log(data)
-	main_div.insertAdjacentHTML('beforeend',data[4])
+	main_div.insertAdjacentHTML('beforeend',data[6])
 	book_r.textContent='Забронировать номер '+data[2]+' на даты:'
 	let s=''
-	data[5].forEach(i=>{s=s+`<option value="${i.fam} ${i.ident}">`});
+	data[7].forEach(i=>{s=s+`<option value="${i.fam} ${i.ident}">`});
 	s=s+'</option>'
 	list_user.innerHTML=s
 	start_data.valueAsNumber=Date.now()+86400000;end_data.valueAsNumber=Date.now()+172800000

@@ -20,8 +20,8 @@ P{max-width:90%;padding:0.5rem 1rem;}
 .head_but{display:grid; justify-content:space-around;grid-row-gap: 1rem;}
 
 INPUT{width: 12rem;}
-#add_room,#log_form,#d_inf,#wind_b{position:absolute;background-color:#DCDCDC;left: 50%;transform: translate(-50%, 0);bottom:40%;width:80%;height:50%;z-index:3;border:0.5rem groove darkgrey;border-radius:1rem;color: black}
-#d_inf,#log_form{display: grid;justify-items: center;align-items: center;}
+#add_room,#log_form,#d_inf,#wind_b,#edit_book{position:absolute;background-color:#DCDCDC;left: 50%;transform: translate(-50%, 0);bottom:40%;width:80%;height:50%;z-index:3;border:0.5rem groove darkgrey;border-radius:1rem;color: black}
+#d_inf,#log_form,#edit_book{display: grid;justify-items: center;align-items: center;}
 #wind_b{display:grid;padding-left: 0.5rem;grid-template-rows: 1fr 1fr 1fr 1fr 1fr;}
 .m_child{width: min-content;}
 datalist{overflow: auto;}
