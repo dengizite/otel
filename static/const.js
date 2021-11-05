@@ -121,10 +121,8 @@ rooms_c=`
                 <option value="Эконом">Эконом</option>            
             </select>
             <select class="room_c" id="room_avail">
-                <option selected value="Доступность">Доступность</option>
-                <option value="Свободен">Свободен</option>
-                <option value="Забронирован">Забронирован</option>
-                <option value="Заселен">Заселен</option>            
+                <option selected value="Свободен">Свободен</option>               
+                <option value="Занят">Занят</option>              
             </select>
             <select class="room_c" id="room_sort">
                 <option selected value="Сортировка">Сортировка</option>
@@ -204,7 +202,7 @@ function send_book(){
 }
 
 function edit_r(el){console.log(el.parentElement);
-    let w=false; const e=['wind_b','log_form','edit_book','add_room']
+    let w=false; const e=['wind_b','log_form','edit_book','add_room','inf_b']
     e.forEach(i=>{if(document.getElementById(i)){w=true}})
     if(!w){
         let e=el.parentElement, d=JSON.parse(e.querySelector('p').textContent)
@@ -246,7 +244,10 @@ function kl_contr(el){
 }
 
 function rooms_contr(el){
-    if(el.textContent==='Применить'){socket.emit('get_data',['rooms_data',room_bed.value,room_cat.value,room_avail.value,room_sort.value,start_d.valueAsNumber,end_d.valueAsNumber])}
+    if(el.textContent==='Применить'){
+        if(end_d.valueAsNumber-start_d.valueAsNumber<86400000||start_d.valueAsNumber<Date.now()||end_d.valueAsNumber<Date.now()){alert('Выберите верные даты')}
+        socket.emit('get_data',['rooms_data',room_bed.value,room_cat.value,room_avail.value,room_sort.value,start_d.valueAsNumber,end_d.valueAsNumber])
+    }
     else if(el.textContent==='Добавить'){main_div.insertAdjacentHTML('beforeend',add_r)}
 }
 
@@ -262,7 +263,7 @@ function add_rooms(e){
             socket.emit('send_data',[c,add_number.value,add_price.value,add_room_bed.value,add_room_cat.value,add_descr_room.value])            
             if(e.textContent==='Добавить'){let s=document.getElementById('show_room')
                 if(s){
-                    let d=JSON.stringify({"num":add_number.value,"price":add_price.value,"bad":add_room_bed.value,"cat":add_room_cat.value,"descr":add_descr_room.value,"stat":"Свободен"}),
+                    let d=JSON.stringify({"num":add_number.value,"price":add_price.value,"bad":add_room_bed.value,"cat":add_room_cat.value,"descr":add_descr_room.value}),
                     p=`<div class="rooms">
                     <p class ="room" id="${add_number.value}">${d}</p>
                     <button class="" onclick="edit_r(this)">Забронировать</button>
@@ -276,7 +277,7 @@ function add_rooms(e){
             else if(e.textContent==='Изменить'){
                 let s=document.getElementById(add_number.value);
                 if(s){                    
-                    s.textContent=JSON.stringify({"num":add_number.value,"price":add_price.value,"bad":add_room_bed.value,"cat":add_room_cat.value,"descr":add_descr_room.value,"stat":"Свободен"})
+                    s.textContent=JSON.stringify({"num":add_number.value,"price":add_price.value,"bad":add_room_bed.value,"cat":add_room_cat.value,"descr":add_descr_room.value})
                 }           
             }
             let el=document.getElementById('add_room');if (el){el.remove()}

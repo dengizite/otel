@@ -21,20 +21,21 @@ socket.on('get_data',(data)=>{console.log(data)
 	if(data[0]==='book_data'){
 		data[1].forEach(i=>{console.log(i.bookss.v)
 			i.bookss.v.start=new Date(i.bookss.v.start).toDateString()
-				i.bookss.v.end=new Date(i.bookss.v.end).toDateString()
-				let p=`<div class="rooms">
-					<p class ="book" id="${i.bookss.v.room}_${i.bookss.v.num_book}">${JSON.stringify(i.bookss.v)}</p>
-					<button class="buttons" onclick="edit_r(this)">Подтвердить</button>
-					<button class="buttons" onclick="edit_r(this)">Отменить</button>
-				</div>
-				`
-				show_room.insertAdjacentHTML('beforeend',p)			
+			i.bookss.v.end=new Date(i.bookss.v.end).toDateString()
+			let p=`<div class="rooms">
+				<p class ="book" id="${i.bookss.v.room}_${i.bookss.v.num_book}">${JSON.stringify(i.bookss.v)}</p>
+				<button class="buttons" onclick="edit_r(this)">Подтвердить</button>
+				<button class="buttons" onclick="edit_r(this)">Отменить</button>
+			</div>
+			`
+			show_room.insertAdjacentHTML('beforeend',p)
 		})
 	}
 	else if(data[0]==='rooms_data'){
 		for(let i in data[1]){console.log(data[1][i])
+			delete data[1][i].books 
 			let p=`<div class="rooms">
-			<p class ="room" id="${data[1][i].num}">${JSON.stringify(data[1][i])}</p>
+			<p class ="room" id="${data[1][i]._id}">${JSON.stringify(data[1][i])}</p>
 			<button class="buttons" onclick="edit_r(this)">Забронировать</button>
 			<button class="buttons" onclick="edit_r(this)">Изменить</button>
 			<button class="buttons" onclick="edit_r(this)">Удалить</button>
@@ -78,13 +79,23 @@ socket.on('send_data',(data)=>{
 
 socket.on('booking',(data)=>{console.log(data)
 	main_div.insertAdjacentHTML('beforeend',data[6])
-	book_r.textContent='Забронировать номер '+data[2]+' на даты:'
-	let s=''
-	data[7].forEach(i=>{s=s+`<option value="${i.fam} ${i.ident}">`});
-	s=s+'</option>'
-	list_user.innerHTML=s
-	start_data.valueAsNumber=Date.now()+86400000;end_data.valueAsNumber=Date.now()+172800000
-	price_num.value=data[3];sum.textContent=data[3]
+	if(data[1]==='room'){
+		book_r.textContent='Забронировать номер '+data[2]+' на даты:'
+		let s=''
+		data[7].forEach(i=>{s=s+`<option value="${i.fam} ${i.ident}">`});
+		s=s+'</option>'
+		list_user.innerHTML=s
+		start_data.valueAsNumber=Date.now()+86400000;end_data.valueAsNumber=Date.now()+172800000
+		price_num.value=data[3];sum.textContent=data[3]
+	}
+	else if(data[1]==='user'&&data[7].length!=0){console.log(data[7]);
+		data[7].forEach(i=>{
+			i.bookss.v.start=new Date(i.bookss.v.start).toDateString()
+			i.bookss.v.end=new Date(i.bookss.v.end).toDateString()
+			delete i.bookss.v.pasp
+			inf_b.insertAdjacentHTML('beforeend',`<div>${JSON.stringify(i.bookss.v)}</div>`)}
+			)
+	}
 })
 
 socket.on('chat',(data)=>{console.log(data)})

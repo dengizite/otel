@@ -8,12 +8,11 @@ event_close = "serverOpening", event_open = "serverClosed";
 client.on(event_close,ev=>{console.log(40,`received ${event_close}: ${JSON.stringify(ev, null, 2)}`)})
 client.on(event_open,ev=>{console.log(45,`received ${event_open}: ${JSON.stringify(ev, null, 2)}`)}) 
 
-let dbRooms,dbUsers//,dbBooks
+let dbRooms,dbUsers
 async function con_mongo(){
 	await client.connect();console.log('Connected')
 	dbRooms=client.db('hotel').collection('dates')
-	dbUsers=client.db('hotel').collection('users')
-	//dbBooks=client.db('hotel').collection('books')
+	dbUsers=client.db('hotel').collection('users')	
 };
 async function count_books(){
 	return dbRooms.aggregate([{$project:{_id: null,bookss:{$objectToArray:"$books"}}},{ $unwind:"$bookss"}]).toArray()
@@ -37,6 +36,33 @@ async function aggr_find(a){return dbRooms.aggregate([
    {$project:{_id: null,bookss:{$objectToArray:'$books'}}},{$unwind:"$bookss"},
    {$match:a}
 ]).toArray()}
+async function find_occup_room(a,b,c){return dbRooms.aggregate(
+	[		
+		{$project: {_id:0,bookss:{$objectToArray:"$books"},bad:1,cat:1,price:1,num:1,descr:1,books:1}},
+		{$unwind:{path:"$bookss",preserveNullAndEmptyArrays:true}},
+		{$match:a},
+		{$match:{$or:[{"bookss.v.stat":'Подтверждено'},{"bookss.v.stat":'Ожидает'}]}},
+		{$group: {_id:'$num',bad:{'$first':'$bad'},cat:{'$first':'$cat'},price:{'$first':'$price'},descr:{'$first':'$descr'}}},
+		{$match:b}
+	]
+	).sort(c).toArray()
+}
+async function find_free_room(a,b,c){return dbRooms.aggregate(
+	[
+		{$project: {_id:0,bookss:{$objectToArray:"$books"},bad:1,cat:1,price:1,num:1,descr:1,books:1}},
+		{$unwind:{path:"$bookss",preserveNullAndEmptyArrays:true}},
+		{$match:a},
+		{$match:{$or:[{"bookss.v.stat":'Подтверждено'},{"bookss.v.stat":'Ожидает'}]}},
+		{$group:{_id:null,nums:{'$addToSet':'$num'}}},
+		 {$lookup:
+			{from:"dates",let:{n:"$nums"},pipeline:[{$match:{$expr:{$not:{$in:["$num",'$$n']}}}}],as:"res"} 
+		}, 
+		{$project: {res:1,_id:0}},{$unwind :"$res"},
+		{$group:{_id:'$res.num',bad:{'$first':'$res.bad'},cat:{'$first':'$res.cat'},price:{'$first':'$res.price'},descr:{'$first':'$res.descr'}}},
+		{$match:b}
+	]
+	).sort(c).toArray()
+}
 
 const app=express(),http=http_base.createServer(app),io=io_base(http),__dirname = path.resolve(),PORT=process.env.PORT||8080,clients={}
 app.use(express.static(".")); 
@@ -69,18 +95,38 @@ io.on('connection', (socket) => {
 			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
 			if(data[3]&&data[4]){let b=`bookss.v.start`;a[b]={$gte:data[3],$lt:data[4]}}
 			else if(data[3]&&!data[4]){let b=`bookss.v.start`;a[b]={$gte:data[3]}}
-			else if(!data[3]&&data[4]){let b=`bookss.v.start`;a[b]={$lt:data[4]}}		
+			else if(!data[3]&&data[4]){let b=`bookss.v.start`;a[b]={$lt:data[4]}}
 			aggr_find(a).then((resp)=>{console.log(54,resp);
 				io.to(socket.id).emit('get_data',['book_data',resp])
 			}).catch(err=>{catch_err(err)})	
 		}
-		else if(data[0]==='rooms_data'){let q={},c
-			if(data[1]!=='Мест'){q['bad']=data[1]};if(data[2]!=='Категория'){q['cat']=data[2]}
-			if(data[3]!=='Доступность'){q['stat']=data[3]};
-			if(data[4]==='дешевле'){c={'price':1}}else if(data[4]==='дороже'){c={'price':-1}}else{c={}}
-			find(q,dbRooms,c,{_id:0}).then((resp)=>{console.log(54,resp);
-				io.to(socket.id).emit('get_data',['rooms_data',resp])
-			}).catch(err=>{catch_err(err)})
+		else if(data[0]==='rooms_data'){
+			let c,st,en,b={}
+			data[5]?st=data[5]:st=0
+			data[6]?en=data[6]:en=Number.MAX_SAFE_INTEGER			
+			let a={$or:[
+				{$and:[{"bookss.v.start":{$gte:st}},{"bookss.v.start":{$lt:en}}]},
+				{$and:[{"bookss.v.end":{$gte:st}},{"bookss.v.end":{$lt:en}}]},
+				{$and:[{"bookss.v.start":{$lt:st}},{"bookss.v.end":{$gte:en}}]},
+			]}			
+			if(data[1]!=='Мест'&&data[2]!=='Категория'){b={$and:[{'bad':data[1]},{'cat':data[2]}]}}
+			else if(data[1]==='Мест'&&data[2]!=='Категория'){b={'cat':data[2]}}
+			else if(data[1]!=='Мест'&&data[2]==='Категория'){b={'bad':data[1]}}
+			if(data[4]==='дешевле'){c={'price':1}}else if(data[4]==='дороже'){c={'price':-1}}else{c={_id:1}}
+			if(data[3]==='Свободен'){
+				find_free_room(a,b,c).then((resp)=>{console.log(54,resp);
+					if(resp.length!=0){io.to(socket.id).emit('get_data',['rooms_data',resp])}
+					else{find(b,dbRooms,c,{_id:0,books:0}).then((resp)=>{
+							io.to(socket.id).emit('get_data',['rooms_data',resp])
+						}).catch(err=>{catch_err(err)})
+					}
+				}).catch(err=>{catch_err(err)})
+			}
+			if(data[3]==='Занят'){
+				find_occup_room(a,b,c).then((resp)=>{console.log(54,resp);
+					io.to(socket.id).emit('get_data',['rooms_data',resp])
+				}).catch(err=>{catch_err(err)})
+			}
 		}
 		else if(data[0]==='kl_data'){
 			let q={$or:[{'fam':{'$regex':data[1],'$options':'i'}},{'tel':{'$regex':data[1],'$options':'i'}}]}
@@ -103,7 +149,7 @@ io.on('connection', (socket) => {
 			.catch(err=>{catch_err(err,socket.id)})
 		}
 		else if(data[0]==='add_room'){
-			insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'stat':'Свободен','books':{}},dbRooms)
+			insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'books':{}},dbRooms)
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})
 		}
@@ -112,9 +158,10 @@ io.on('connection', (socket) => {
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})
 		}
-		else if(data[0]==='set_book'){			
+		else if(data[0]==='set_book'){
 			let w=`books.${count}`
 			let a={"num":data[1]},c={$set:{[w]:{'num_book':count,'room':data[1],'fam':data[2],'pasp':data[3],'start':data[4],'end':data[5],'sum':Number(data[6]),'stat':'Ожидает'}}}
+			console.log(w,a,c);
 			upd(a,dbRooms,c)
 			.then((resp)=>{console.log(resp),count++})
 			.catch(err=>{catch_err(err,socket.id)})
@@ -136,7 +183,7 @@ io.on('connection', (socket) => {
 		}
 		else if(data[0]==='Забронировать'){
 			find({},dbUsers,{},{_id:0,'fam':1,'ident':1}).then((resp)=>{io.to(socket.id).emit('booking',[...data,wind_books,resp])
-			}).catch(err=>{catch_err(err)})			
+			}).catch(err=>{catch_err(err)})
 		}
 		else if(data[0]==='Подтвердить'){
 			let s=`books.${data[2].split('_')[1]}.stat`,q={'num':data[2].split('_')[0],[s]:'Ожидает'}
@@ -151,6 +198,12 @@ io.on('connection', (socket) => {
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})
 		}
+		else if(data[0]==='Бронирования'){
+			let a={}, b=`bookss.v.pasp`;a[b]=data[2];console.log(a);
+			aggr_find(a).then((resp)=>{console.log(resp);
+				io.to(socket.id).emit('booking',[...data,inf_books,resp])
+			}).catch(err=>{catch_err(err)})
+		}		
 	})
 })
 
@@ -180,6 +233,11 @@ wind_books=`<div id="wind_b">
 	</div>
 	<div>
 		<button class="buttons" onclick="send_book()">Подтвердить</button>
+		<button class="buttons" onclick="closes(this)">Закрыть</button>
+	</div>
+</div>`,
+inf_books=`<div id="inf_b">	
+	<div>
 		<button class="buttons" onclick="closes(this)">Закрыть</button>
 	</div>
 </div>`
