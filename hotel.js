@@ -37,7 +37,7 @@ async function aggr_find(a){return dbRooms.aggregate([
    {$match:a}
 ]).toArray()}
 async function find_occup_room(a,b,c){return dbRooms.aggregate(
-	[		
+	[
 		{$project: {_id:0,bookss:{$objectToArray:"$books"},bad:1,cat:1,price:1,num:1,descr:1,books:1}},
 		{$unwind:{path:"$bookss",preserveNullAndEmptyArrays:true}},
 		{$match:a},
@@ -90,7 +90,10 @@ io.on('connection', (socket) => {
 
 	socket.on('get_data',(data)=>{console.log(49,data)
 		if(data[0]==='book_data'){let a={}
-			if(data[1]){let b=`bookss.v.room`;a[b]={'$regex':data[1],'$options':'i'}}
+			if(data[1]){let b=`bookss.v.room`;
+				//a[b]={'$regex':data[1],'$options':'i'}
+				a[b]=data[1]
+			}
 			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
 			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
 			if(data[3]&&data[4]){let b=`bookss.v.start`;a[b]={$gte:data[3],$lt:data[4]}}
@@ -108,7 +111,7 @@ io.on('connection', (socket) => {
 				{$and:[{"bookss.v.start":{$gte:st}},{"bookss.v.start":{$lt:en}}]},
 				{$and:[{"bookss.v.end":{$gte:st}},{"bookss.v.end":{$lt:en}}]},
 				{$and:[{"bookss.v.start":{$lt:st}},{"bookss.v.end":{$gte:en}}]},
-			]}			
+			]}
 			if(data[1]!=='Мест'&&data[2]!=='Категория'){b={$and:[{'bad':data[1]},{'cat':data[2]}]}}
 			else if(data[1]==='Мест'&&data[2]!=='Категория'){b={'cat':data[2]}}
 			else if(data[1]!=='Мест'&&data[2]==='Категория'){b={'bad':data[1]}}
@@ -133,6 +136,19 @@ io.on('connection', (socket) => {
 			find(q,dbUsers,{},{_id:0}).then((resp)=>{console.log(64,resp);
 				io.to(socket.id).emit('get_data',['kl_data',resp])
 			}).catch(err=>{catch_err(err)})
+		}
+		else if(data[0]==='book_dates'){
+			let a={"bookss.v.room":data[1],
+					$or:[
+						{$and:[{"bookss.v.start":{$gte:data[2]}},{"bookss.v.start":{$lt:data[3]}}]},
+						{$and:[{"bookss.v.end":{$gte:data[2]}},{"bookss.v.end":{$lt:data[3]}}]},
+						{$and:[{"bookss.v.start":{$lt:data[2]}},{"bookss.v.end":{$gte:data[3]}}]},
+					],
+					"bookss.v.stat": {$ne : 'Отменено'},
+				}
+				aggr_find(a).then((resp)=>{
+					if(resp.length!=0){io.to(socket.id).emit('get_data',['book_dates',resp])}
+				}).catch(err=>{catch_err(err)})
 		}
 		else if(data[0]==='Отчеты'){console.log(data)}
 	})
@@ -159,12 +175,26 @@ io.on('connection', (socket) => {
 			.catch(err=>{catch_err(err,socket.id)})
 		}
 		else if(data[0]==='set_book'){
-			let w=`books.${count}`
-			let a={"num":data[1]},c={$set:{[w]:{'num_book':count,'room':data[1],'fam':data[2],'pasp':data[3],'start':data[4],'end':data[5],'sum':Number(data[6]),'stat':'Ожидает'}}}
-			console.log(w,a,c);
-			upd(a,dbRooms,c)
-			.then((resp)=>{console.log(resp),count++})
-			.catch(err=>{catch_err(err,socket.id)})
+			let a={"bookss.v.room":data[1],
+				$or:[
+					{$and:[{"bookss.v.start":{$gte:data[4]}},{"bookss.v.start":{$lt:data[5]}}]},
+					{$and:[{"bookss.v.end":{$gte:data[4]}},{"bookss.v.end":{$lt:data[5]}}]},
+					{$and:[{"bookss.v.start":{$lt:data[4]}},{"bookss.v.end":{$gte:data[5]}}]},
+				]
+			}
+			aggr_find(a).then((resp)=>{console.log(111,resp)
+				if(resp.length!=0){io.to(socket.id).emit('booking',['','busy_book','','','','',busy_book])}
+				else{console.log(222,resp)
+					let w=`books.${count}`,b={"num":data[1]},
+					c={$set:{[w]:{'num_book':count,'room':data[1],'fam':data[2],'pasp':data[3],'start':data[4],'end':data[5],'sum':Number(data[6]),'stat':'Ожидает'}}}
+					upd(b,dbRooms,c)
+					.then((resp)=>{console.log(count);count++;console.log(count);
+						io.to(socket.id).emit('booking',['','success_book','','','','',success_book])
+					})
+					.catch(err=>{catch_err(err,socket.id)})
+				}
+			}).catch(err=>{catch_err(err)})
+			
 		}
 	})
 
@@ -203,7 +233,7 @@ io.on('connection', (socket) => {
 			aggr_find(a).then((resp)=>{console.log(resp);
 				io.to(socket.id).emit('booking',[...data,inf_books,resp])
 			}).catch(err=>{catch_err(err)})
-		}		
+		}
 	})
 })
 
@@ -230,6 +260,27 @@ wind_books=`<div id="wind_b">
 		<label for="price_n">Цена за сутки:</label>
 		<input type="text" name="price_n" maxlength="10" id="price_num" onblur="count()"/>
 		<span>Итог: </span><span id="sum"></span>
+	</div>	
+	<div>
+	<table id="calendar3"  onchange="Kalendar3()">
+    <thead>
+    <tr><td colspan="4"><select>
+        <option value="0">Январь</option>
+        <option value="1">Февраль</option>
+        <option value="2">Март</option>
+        <option value="3">Апрель</option>
+        <option value="4">Май</option>
+        <option value="5">Июнь</option>
+        <option value="6">Июль</option>
+        <option value="7">Август</option>
+        <option value="8">Сентябрь</option>
+        <option value="9">Октябрь</option>
+        <option value="10">Ноябрь</option>
+        <option value="11">Декабрь</option>
+        </select><td colspan="3"><input type="number" value="" min="0" max="9999" size="4">
+        <tr><td>Пн<td>Вт<td>Ср<td>Чт<td>Пт<td>Сб<td>Вс
+        <tbody>
+</table>
 	</div>
 	<div>
 		<button class="buttons" onclick="send_book()">Подтвердить</button>
@@ -240,4 +291,7 @@ inf_books=`<div id="inf_b">
 	<div>
 		<button class="buttons" onclick="closes(this)">Закрыть</button>
 	</div>
-</div>`
+</div>`,
+busy_book=`<p id="busy_b">Выберите другие даты, на эти даты номер занят</p>`
+,
+success_book=`<p id="success_b">Забронировано</p>`

@@ -32,10 +32,12 @@ socket.on('get_data',(data)=>{console.log(data)
 		})
 	}
 	else if(data[0]==='rooms_data'){
-		for(let i in data[1]){console.log(data[1][i])
+		for(let i in data[1]){console.log(i,data[1][i])
 			delete data[1][i].books 
+			let id_num;
+			data[1][i]._id?id_num=data[1][i]._id:id_num=data[1][i].num
 			let p=`<div class="rooms">
-			<p class ="room" id="${data[1][i]._id}">${JSON.stringify(data[1][i])}</p>
+			<p class ="room" id="${id_num}">${JSON.stringify(data[1][i])}</p>
 			<button class="buttons" onclick="edit_r(this)">Забронировать</button>
 			<button class="buttons" onclick="edit_r(this)">Изменить</button>
 			<button class="buttons" onclick="edit_r(this)">Удалить</button>
@@ -53,7 +55,7 @@ socket.on('get_data',(data)=>{console.log(data)
 				`
 				show_room.insertAdjacentHTML('beforeend',p)
 		})	 */
-	}		
+	}
 	else if(data[0]==='kl_data'){
 		for(let i in data[1]){console.log(data[1][i])
 			let p=`<div class="rooms">
@@ -64,6 +66,17 @@ socket.on('get_data',(data)=>{console.log(data)
 			</div>
 			`
 			show_room.insertAdjacentHTML('beforeend',p)
+		}
+	}
+	else if(data[0]==='book_dates'){let days=[]
+		data[1].forEach(i=>{
+			for (let j=i.bookss.v.start;j<=i.bookss.v.end;j+=86400000){days.push(new Date(j).getDate())}
+		})
+		let els = document.querySelectorAll('tbody>tr>td');
+		for (let el of els){
+			if(days.includes(Number(el.textContent))===true){
+				el.style.color='white';el.style['text-decoration']='line-through'
+			}
 		}
 	}
 })
@@ -87,6 +100,8 @@ socket.on('booking',(data)=>{console.log(data)
 		list_user.innerHTML=s
 		start_data.valueAsNumber=Date.now()+86400000;end_data.valueAsNumber=Date.now()+172800000
 		price_num.value=data[3];sum.textContent=data[3]
+		let c=document.getElementById('calendar3')
+		if(c){Calendar3("calendar3",new Date().getFullYear(),new Date().getMonth())}
 	}
 	else if(data[1]==='user'&&data[7].length!=0){console.log(data[7]);
 		data[7].forEach(i=>{
@@ -95,6 +110,12 @@ socket.on('booking',(data)=>{console.log(data)
 			delete i.bookss.v.pasp
 			inf_b.insertAdjacentHTML('beforeend',`<div>${JSON.stringify(i.bookss.v)}</div>`)}
 			)
+	}
+	else if(data[1]==='busy_book'){
+		let b=document.getElementById('busy_b');if(b){setTimeout(()=>{b.remove()},1000)}}
+	else if(data[1]==='success_book'){
+		let b=document.getElementById('success_b'),c=document.getElementById('wind_b')
+		if(c){c.remove()};if(b){setTimeout(()=>{b.remove()},1000)}
 	}
 })
 

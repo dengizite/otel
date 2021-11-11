@@ -197,7 +197,7 @@ function send_book(){
     else if(num.test(price_num.value)===true){alert('Укажите цену - только цифры')}
     else{
         socket.emit('send_data',['set_book',book_r.textContent.split(' ')[2],select_user.value.split(' ')[0],select_user.value.split(' ')[1],start_data.valueAsNumber,end_data.valueAsNumber,sum.textContent])
-        wind_b.remove()
+        //wind_b.remove()
     }   
 }
 
@@ -285,4 +285,42 @@ function add_rooms(e){
         
     }
     else if(e.textContent==='Закрыть'){let el=document.getElementById('add_room');if (el){el.remove()}}
+}
+
+function Calendar3(id, year, month) {
+	let Dlast = new Date(year,month+1,0).getDate(),
+    D = new Date(year,month,Dlast),
+    DNlast = D.getDay(),
+    df=new Date(D.getFullYear(),D.getMonth(),1),
+    DNfirst = df.getDay(),
+    calendar = '<tr>',
+    m = document.querySelector('#'+id+' option[value="' + D.getMonth() + '"]'),
+    g = document.querySelector('#'+id+' input');   
+	if (DNfirst != 0) {for(let  i = 1; i < DNfirst; i++) calendar += '<td>'}
+	else{for(let  i = 0; i < 6; i++) calendar += '<td>'}
+	for(let  i = 1; i <= Dlast; i++) {
+		if (i == new Date().getDate() && D.getFullYear() == new Date().getFullYear() && D.getMonth() == new Date().getMonth()) {
+			calendar += '<td class="today">' + i;
+			}
+		else{calendar += '<td>' + i}
+		if (new Date(D.getFullYear(),D.getMonth(),i).getDay() == 0){calendar += '<tr>'}
+	}
+	for(let  i = DNlast; i < 7; i++) calendar += '<td>&nbsp;';
+	document.querySelector('#'+id+' tbody').innerHTML = calendar;
+	g.value = D.getFullYear();
+	m.selected = true;
+	if (document.querySelectorAll('#'+id+' tbody tr').length < 6) {
+		document.querySelector('#'+id+' tbody').innerHTML += '<tr><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;';
+	}
+    console.log(D.getTime(),df.getTime())
+    socket.emit('get_data',['book_dates',document.getElementById('book_r').textContent.split(' ')[2],df.getTime(),D.getTime()])
+
+}
+
+function Kalendar3() {
+  /*   let m=parseFloat(document.querySelector('#calendar3 select').options[document.querySelector('#calendar3 select').selectedIndex].value),
+    y=document.querySelector('#calendar3 input').value
+    console.log(m,y) */
+
+	Calendar3("calendar3",document.querySelector('#calendar3 input').value,parseFloat(document.querySelector('#calendar3 select').options[document.querySelector('#calendar3 select').selectedIndex].value));
 }
