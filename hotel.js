@@ -75,14 +75,18 @@ io.on('connection', (socket) => {
 	
 	socket.on ('check_in',(data)=>{console.log(64,data)
 		if(data[0]==='add_client'){			
-			insrt_user({'name':data[1],'fam':data[2],'pass':data[3],'ident':data[4],'tel':data[5]},dbUsers)
+			insrt_user({'name':data[1],'fam':data[2],'pass':data[3],'ident':data[4],'tel':data[5],'role':'klient'},dbUsers)
 			.then((resp)=>{io.to(socket.id).emit('check_in',['set_cookie',data[2],data[3],control_menu])})
 			.catch(err=>{catch_err(err,socket.id)})			
 		}
 		else{
 			let q={'fam':data[1],'pass':data[2]}
 			find(q,dbUsers,{},{_id:0}).then((resp)=>{
-				if(resp.length!==0){io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],control_menu])}
+				if(resp.length!==0){console.log(resp)
+					if(resp[0].role==='admin'){
+						io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],control_menu])}
+					else{io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],user_menu])}
+				}
 				else{io.to(socket.id).emit('check_in',['must_reg'])}
 			}).catch(err=>{catch_err(err)})
 		}
@@ -150,10 +154,32 @@ io.on('connection', (socket) => {
 					if(resp.length!=0){io.to(socket.id).emit('get_data',['book_dates',resp])}
 				}).catch(err=>{catch_err(err)})
 		}
+		if(data[0]==='books_kl'){
+			let q={'fam':data[1],'pass':data[2]}
+			find(q,dbUsers,{},{_id:0,ident:1}).then((resp)=>{
+				let a={"bookss.v.fam":data[1],"bookss.v.fam":resp[0].ident}
+				aggr_find(a).then((resp)=>{console.log(161,resp);
+					//io.to(socket.id).emit('get_data',['book_data',resp])
+				}).catch(err=>{catch_err(err)}) 
+			})
+			.catch(err=>{catch_err(err,socket.id)})
+			/* if(data[1]){let b=`bookss.v.room`;
+				//a[b]={'$regex':data[1],'$options':'i'}
+				a[b]=data[1]
+			}
+			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
+			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
+			if(data[3]&&data[4]){let b=`bookss.v.start`;a[b]={$gte:data[3],$lt:data[4]}}
+			else if(data[3]&&!data[4]){let b=`bookss.v.start`;a[b]={$gte:data[3]}}
+			else if(!data[3]&&data[4]){let b=`bookss.v.start`;a[b]={$lt:data[4]}}
+			aggr_find(a).then((resp)=>{console.log(54,resp);
+				io.to(socket.id).emit('get_data',['book_data',resp])
+			}).catch(err=>{catch_err(err)}) */	
+		}
 		else if(data[0]==='Отчеты'){console.log(data)}
 	})
 
-	socket.on('send_data',(data)=>{console.log(data)
+	socket.on('send_data',(data)=>{console.log(160,data)
 		if(data[0]==='add_client'){
 			insrt_user({'name':data[1],'fam':data[2],'pass':data[3],'ident':data[4],'tel':data[5]},dbUsers)
 			.then((resp)=>{console.log(resp)})
@@ -174,7 +200,7 @@ io.on('connection', (socket) => {
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})
 		}
-		else if(data[0]==='set_book'){
+		else if(data[0]==='set_book'||data[0]==='set_book_cl'){
 			let a={"bookss.v.room":data[1],
 				$or:[
 					{$and:[{"bookss.v.start":{$gte:data[4]}},{"bookss.v.start":{$lt:data[5]}}]},
@@ -185,17 +211,32 @@ io.on('connection', (socket) => {
 			aggr_find(a).then((resp)=>{console.log(111,resp)
 				if(resp.length!=0){io.to(socket.id).emit('booking',['','busy_book','','','','',busy_book])}
 				else{console.log(222,resp)
-					let w=`books.${count}`,b={"num":data[1]},
-					c={$set:{[w]:{'num_book':count,'room':data[1],'fam':data[2],'pasp':data[3],'start':data[4],'end':data[5],'sum':Number(data[6]),'stat':'Ожидает'}}}
-					upd(b,dbRooms,c)
-					.then((resp)=>{console.log(count);count++;console.log(count);
-						io.to(socket.id).emit('booking',['','success_book','','','','',success_book])
-					})
-					.catch(err=>{catch_err(err,socket.id)})
+					let w=`books.${count}`,b={"num":data[1]},c
+					if(data[0]==='set_book'){
+						c={$set:{[w]:{'num_book':count,'room':data[1],'fam':data[2],'pasp':data[3],'start':data[4],'end':data[5],'sum':Number(data[6]),'stat':'Ожидает'}}};
+						upd(b,dbRooms,c)
+						.then((resp)=>{console.log(count);count++;console.log(count);
+							io.to(socket.id).emit('booking',['','success_book','','','','',success_book])
+						})						
+						.catch(err=>{catch_err(err,socket.id)})
+					}
+					else if(data[0]==='set_book_cl'){
+						let q={'fam':data[2],'pass':data[3]},pasp
+						find(q,dbUsers,{},{_id:0,ident:1}).then((resp)=>{
+							pasp=resp[0].ident;
+							console.log(206,pasp);
+							c={$set:{[w]:{'num_book':count,'room':data[1],'fam':data[2],'pasp':pasp,'start':data[4],'end':data[5],'sum':Number(data[6]),'stat':'Ожидает'}}};
+							upd(b,dbRooms,c)
+							.then((resp)=>{console.log(count);count++;console.log(count);
+								io.to(socket.id).emit('booking',['','success_book','','','','',success_book])
+							})
+							.catch(err=>{catch_err(err,socket.id)})
+						}).catch(err=>{catch_err(err)})
+						
+					}
 				}
-			}).catch(err=>{catch_err(err)})
-			
-		}
+			}).catch(err=>{catch_err(err)})			
+		}		
 	})
 
 	socket.on('edit_data',(data)=>{console.log(111,data)
@@ -215,6 +256,7 @@ io.on('connection', (socket) => {
 			find({},dbUsers,{},{_id:0,'fam':1,'ident':1}).then((resp)=>{io.to(socket.id).emit('booking',[...data,wind_books,resp])
 			}).catch(err=>{catch_err(err)})
 		}
+		else if(data[0]==='Бронировать'){io.to(socket.id).emit('booking',[...data,wind_books_user])}
 		else if(data[0]==='Подтвердить'){
 			let s=`books.${data[2].split('_')[1]}.stat`,q={'num':data[2].split('_')[0],[s]:'Ожидает'}
 			upd(q,dbRooms,{$set:{[s]:'Подтверждено'}})
@@ -240,11 +282,17 @@ io.on('connection', (socket) => {
 http.listen(PORT, () => {console.log('listening on *:80')})
 
 const control_menu=`<div id="adm_control" class="device_but">
+		<button class="buttons go-out" onclick="go_out()">Выйти</button>
 		<button class="buttons" onclick="get_data(this)">Бронирования</button>
 		<button class="buttons" onclick="get_data(this)">Номера</button>
 		<button class="buttons" onclick="get_data(this)">Клиенты</button>
 		<button class="buttons" onclick="get_data(this)">Отчеты</button>
-	</div>`,
+	</>`,
+	user_menu=`<div id="cl_control" class="device_but">
+		<button class="buttons go-out" onclick="go_out()">Выйти</button>
+		<button class="buttons" onclick="get_data(this)">История</button>
+		<button class="buttons" onclick="get_data(this)">Номера</button>		
+	</>`,
 wind_books=`<div id="wind_b">
 	<p id='book_r'></p>
 	<div id="dates">
@@ -255,6 +303,45 @@ wind_books=`<div id="wind_b">
 		<label for="sel_user">Выберите на кого бронировать:</label>
 		<input list="list_user" id="select_user" name="sel_user"/>
 		<datalist id="list_user"></datalist>
+	</div>
+	<div>
+		<label for="price_n">Цена за сутки:</label>
+		<input type="text" name="price_n" maxlength="10" id="price_num" onblur="count()"/>
+		<span>Итог: </span><span id="sum"></span>
+	</div>	
+	<div>
+	<table id="calendar3"  onchange="Kalendar3()">
+    <thead>
+    <tr><td colspan="4"><select>
+        <option value="0">Январь</option>
+        <option value="1">Февраль</option>
+        <option value="2">Март</option>
+        <option value="3">Апрель</option>
+        <option value="4">Май</option>
+        <option value="5">Июнь</option>
+        <option value="6">Июль</option>
+        <option value="7">Август</option>
+        <option value="8">Сентябрь</option>
+        <option value="9">Октябрь</option>
+        <option value="10">Ноябрь</option>
+        <option value="11">Декабрь</option>
+        </select><td colspan="3"><input type="number" value="" min="0" max="9999" size="4">
+        <tr><td>Пн<td>Вт<td>Ср<td>Чт<td>Пт<td>Сб<td>Вс
+        <tbody>
+</table>
+	</div>
+	<div>
+		<button class="buttons" onclick="send_book()">Подтвердить</button>
+		<button class="buttons" onclick="closes(this)">Закрыть</button>
+	</div>
+</div>`,
+wind_books_user=`<div id="wind_b">
+	<p id='book_r'></p>
+	<div id="dates">
+		<label class="m_child">c <input class="m_child" id="start_data" type="date" onblur="count()"></label>
+		<label class="m_child">до <input class="m_child" id="end_data" type="date" onblur="count()"></label>
+	</div>
+	<div>
 	</div>
 	<div>
 		<label for="price_n">Цена за сутки:</label>

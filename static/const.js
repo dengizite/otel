@@ -88,9 +88,16 @@ function data_from_cookie(name){
 function get_data(el){const els=['booking_control','rooms_control','kl_control','report_control','show_room']
     els.forEach(i=>{let e=document.getElementById(i);if(e){e.remove()}})
     if(el.textContent==='Бронирования'){main_div.insertAdjacentHTML('beforeend',booking_c)}
-    else if(el.textContent==='Номера'){main_div.insertAdjacentHTML('beforeend',rooms_c)}
+    else if(el.textContent==='Номера'){
+        main_div.insertAdjacentHTML('beforeend',rooms_c)
+        if(document.getElementById('cl_control')){ document.getElementById('addR').remove()}
+       
+    }
     else if(el.textContent==='Клиенты'){main_div.insertAdjacentHTML('beforeend',klient_c)}
     else if(el.textContent==='Отчеты'){main_div.insertAdjacentHTML('beforeend',report_c)}
+    else if(el.textContent==='История'){
+        socket.emit('get_data',['books_kl',data_from_cookie('user='),data_from_cookie('pswd=')])
+    }
 }
 
 const  booking_c=`
@@ -135,7 +142,7 @@ rooms_c=`
     </div>
     <div class="device_but">
         <button class="buttons" onclick="rooms_contr(this)">Применить</button>
-        <button class="buttons" onclick="rooms_contr(this)">Добавить</button>
+        <button class="buttons" onclick="rooms_contr(this)" id="addR">Добавить</button>
     </div>   
 </div>`,
 
@@ -190,14 +197,18 @@ function count(){
 }
 
 function send_book(){
-    const s=list_user.childNodes,c=[],num=/[^0-9]/gi
-    s.forEach(i=>c.push(i.value))
-    if(c.includes(select_user.value)===false){alert('Выберите клиента из выпадающего списка')}
+    let num=/[^0-9]/gi,s_u=document.getElementById('select_user'),s,c=[]
+    if(s_u){s=list_user.childNodes;s.forEach(i=>c.push(i.value))}
+    if(s_u&&c.includes(s_u.value)===false){alert('Выберите клиента из выпадающего списка')}
     else if(end_data.valueAsNumber-start_data.valueAsNumber<86400000||start_data.valueAsNumber<Date.now()){alert('Выберите верные даты')}
     else if(num.test(price_num.value)===true){alert('Укажите цену - только цифры')}
     else{
-        socket.emit('send_data',['set_book',book_r.textContent.split(' ')[2],select_user.value.split(' ')[0],select_user.value.split(' ')[1],start_data.valueAsNumber,end_data.valueAsNumber,sum.textContent])
-        //wind_b.remove()
+        if(s_u){
+            socket.emit('send_data',['set_book',book_r.textContent.split(' ')[2],s_u.value.split(' ')[0],s_u.value.split(' ')[1],start_data.valueAsNumber,end_data.valueAsNumber,sum.textContent])
+        }
+        else{
+            socket.emit('send_data',['set_book_cl',book_r.textContent.split(' ')[2],data_from_cookie('user='),data_from_cookie('pswd='), start_data.valueAsNumber,end_data.valueAsNumber,sum.textContent])
+        }
     }   
 }
 
@@ -318,9 +329,11 @@ function Calendar3(id, year, month) {
 }
 
 function Kalendar3() {
-  /*   let m=parseFloat(document.querySelector('#calendar3 select').options[document.querySelector('#calendar3 select').selectedIndex].value),
-    y=document.querySelector('#calendar3 input').value
-    console.log(m,y) */
+  	Calendar3("calendar3",document.querySelector('#calendar3 input').value,parseFloat(document.querySelector('#calendar3 select').options[document.querySelector('#calendar3 select').selectedIndex].value));
+}
 
-	Calendar3("calendar3",document.querySelector('#calendar3 input').value,parseFloat(document.querySelector('#calendar3 select').options[document.querySelector('#calendar3 select').selectedIndex].value));
+function go_out() {
+    let u=data_from_cookie('user='),p=data_from_cookie('pswd=')
+    document.cookie=`user=${u};max-age=-1`;document.cookie=`pswd=${p}; max-age=-1`
+    window.location.reload(true)
 }

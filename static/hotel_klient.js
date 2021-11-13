@@ -34,15 +34,24 @@ socket.on('get_data',(data)=>{console.log(data)
 	else if(data[0]==='rooms_data'){
 		for(let i in data[1]){console.log(i,data[1][i])
 			delete data[1][i].books 
-			let id_num;
+			let id_num,p
 			data[1][i]._id?id_num=data[1][i]._id:id_num=data[1][i].num
-			let p=`<div class="rooms">
-			<p class ="room" id="${id_num}">${JSON.stringify(data[1][i])}</p>
-			<button class="buttons" onclick="edit_r(this)">Забронировать</button>
-			<button class="buttons" onclick="edit_r(this)">Изменить</button>
-			<button class="buttons" onclick="edit_r(this)">Удалить</button>
-			</div>
-			`
+			if(document.getElementById('cl_control')){
+				p=`<div class="rooms">
+				<p class ="room" id="${id_num}">${JSON.stringify(data[1][i])}</p>
+				<button class="buttons" onclick="edit_r(this)">Бронировать</button>				
+				</div>
+				`
+			}
+			else{
+				p=`<div class="rooms">
+				<p class ="room" id="${id_num}">${JSON.stringify(data[1][i])}</p>
+				<button class="buttons" onclick="edit_r(this)">Забронировать</button>
+				<button class="buttons" onclick="edit_r(this)">Изменить</button>
+				<button class="buttons" onclick="edit_r(this)">Удалить</button>
+				</div>
+				`
+			}
 			show_room.insertAdjacentHTML('beforeend',p)
 		}
 		/* data[1].forEach(j=>{console.log(j)
@@ -94,10 +103,11 @@ socket.on('booking',(data)=>{console.log(data)
 	main_div.insertAdjacentHTML('beforeend',data[6])
 	if(data[1]==='room'){
 		book_r.textContent='Забронировать номер '+data[2]+' на даты:'
-		let s=''
-		data[7].forEach(i=>{s=s+`<option value="${i.fam} ${i.ident}">`});
-		s=s+'</option>'
-		list_user.innerHTML=s
+		let s='',s_u=document.getElementById('select_user')
+		if(s_u){
+			data[7].forEach(i=>{s=s+`<option value="${i.fam} ${i.ident}">`});
+			s=s+'</option>';list_user.innerHTML=s
+		}
 		start_data.valueAsNumber=Date.now()+86400000;end_data.valueAsNumber=Date.now()+172800000
 		price_num.value=data[3];sum.textContent=data[3]
 		let c=document.getElementById('calendar3')
