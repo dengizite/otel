@@ -88,6 +88,19 @@ socket.on('get_data',(data)=>{console.log(data)
 			}
 		}
 	}
+	if(data[0]==='books_kl'){
+		data[1].forEach(i=>{console.log(i.bookss.v)
+			i.bookss.v.start=new Date(i.bookss.v.start).toDateString()
+			i.bookss.v.end=new Date(i.bookss.v.end).toDateString()
+			let p=`<div class="rooms">
+				<p class ="book" id="${i.bookss.v.room}_${i.bookss.v.num_book}">${JSON.stringify(i.bookss.v)}</p>
+				<button class="buttons" onclick="edit_r(this)">Подтвердить</button>
+				<button class="buttons" onclick="edit_r(this)">Отменить</button>
+			</div>
+			`
+			show_room.insertAdjacentHTML('beforeend',p)
+		})
+	}
 })
 
 socket.on('send_data',(data)=>{

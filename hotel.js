@@ -157,24 +157,13 @@ io.on('connection', (socket) => {
 		if(data[0]==='books_kl'){
 			let q={'fam':data[1],'pass':data[2]}
 			find(q,dbUsers,{},{_id:0,ident:1}).then((resp)=>{
-				let a={"bookss.v.fam":data[1],"bookss.v.fam":resp[0].ident}
+				let a={"bookss.v.fam":data[1],"bookss.v.pasp":resp[0].ident}
+				console.log(a)
 				aggr_find(a).then((resp)=>{console.log(161,resp);
-					//io.to(socket.id).emit('get_data',['book_data',resp])
+					io.to(socket.id).emit('get_data',['books_kl',resp])
 				}).catch(err=>{catch_err(err)}) 
 			})
-			.catch(err=>{catch_err(err,socket.id)})
-			/* if(data[1]){let b=`bookss.v.room`;
-				//a[b]={'$regex':data[1],'$options':'i'}
-				a[b]=data[1]
-			}
-			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
-			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
-			if(data[3]&&data[4]){let b=`bookss.v.start`;a[b]={$gte:data[3],$lt:data[4]}}
-			else if(data[3]&&!data[4]){let b=`bookss.v.start`;a[b]={$gte:data[3]}}
-			else if(!data[3]&&data[4]){let b=`bookss.v.start`;a[b]={$lt:data[4]}}
-			aggr_find(a).then((resp)=>{console.log(54,resp);
-				io.to(socket.id).emit('get_data',['book_data',resp])
-			}).catch(err=>{catch_err(err)}) */	
+			.catch(err=>{catch_err(err,socket.id)})				
 		}
 		else if(data[0]==='Отчеты'){console.log(data)}
 	})
@@ -206,7 +195,7 @@ io.on('connection', (socket) => {
 					{$and:[{"bookss.v.start":{$gte:data[4]}},{"bookss.v.start":{$lt:data[5]}}]},
 					{$and:[{"bookss.v.end":{$gte:data[4]}},{"bookss.v.end":{$lt:data[5]}}]},
 					{$and:[{"bookss.v.start":{$lt:data[4]}},{"bookss.v.end":{$gte:data[5]}}]},
-				]
+				],"bookss.v.stat": {$ne : 'Отменено'}
 			}
 			aggr_find(a).then((resp)=>{console.log(111,resp)
 				if(resp.length!=0){io.to(socket.id).emit('booking',['','busy_book','','','','',busy_book])}
