@@ -76,7 +76,7 @@ io.on('connection', (socket) => {
 	socket.on ('check_in',(data)=>{console.log(64,data)
 		if(data[0]==='add_client'){			
 			insrt_user({'name':data[1],'fam':data[2],'pass':data[3],'ident':data[4],'tel':data[5],'role':'klient'},dbUsers)
-			.then((resp)=>{io.to(socket.id).emit('check_in',['set_cookie',data[2],data[3],control_menu])})
+			.then((resp)=>{io.to(socket.id).emit('check_in',['set_cookie',data[2],data[3],user_menu])})
 			.catch(err=>{catch_err(err,socket.id)})			
 		}
 		else{
@@ -94,16 +94,19 @@ io.on('connection', (socket) => {
 
 	socket.on('get_data',(data)=>{console.log(49,data)
 		if(data[0]==='book_data'){let a={}
-			if(data[1]){let b=`bookss.v.room`;
-				//a[b]={'$regex':data[1],'$options':'i'}
-				a[b]=data[1]
+			if(data[1]){let b=`bookss.v.room`;a[b]=data[1]}		
+			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
+			if(data[3]&&data[4]){
+				a[`$or`]=[
+					{$and:[{"bookss.v.start":{$gte:data[3]}},{"bookss.v.start":{$lt:data[4]}}]},
+					{$and:[{"bookss.v.end":{$gte:data[3]}},{"bookss.v.end":{$lt:data[4]}}]},
+					{$and:[{"bookss.v.start":{$lt:data[3]}},{"bookss.v.end":{$gte:data[4]}}]},
+				]
 			}
-			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
-			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
-			if(data[3]&&data[4]){let b=`bookss.v.start`;a[b]={$gte:data[3],$lt:data[4]}}
 			else if(data[3]&&!data[4]){let b=`bookss.v.start`;a[b]={$gte:data[3]}}
 			else if(!data[3]&&data[4]){let b=`bookss.v.start`;a[b]={$lt:data[4]}}
-			aggr_find(a).then((resp)=>{console.log(54,resp);
+			console.log(104,a)
+			aggr_find(a).then((resp)=>{console.log(102,resp);
 				io.to(socket.id).emit('get_data',['book_data',resp])
 			}).catch(err=>{catch_err(err)})	
 		}
@@ -150,6 +153,7 @@ io.on('connection', (socket) => {
 					],
 					"bookss.v.stat": {$ne : 'Отменено'},
 				}
+				console.log(158,a)
 				aggr_find(a).then((resp)=>{
 					if(resp.length!=0){io.to(socket.id).emit('get_data',['book_dates',resp])}
 				}).catch(err=>{catch_err(err)})
