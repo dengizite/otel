@@ -169,7 +169,20 @@ io.on('connection', (socket) => {
 			})
 			.catch(err=>{catch_err(err,socket.id)})				
 		}
-		else if(data[0]==='Отчеты'){console.log(data)}
+		else if(data[0]==='clients_in_rooms'){
+			let a={$or:[
+						{$and:[{"bookss.v.start":{$gte:data[1]}},{"bookss.v.start":{$lt:data[2]}}]},
+						{$and:[{"bookss.v.end":{$gte:data[1]}},{"bookss.v.end":{$lt:data[2]}}]},
+						{$and:[{"bookss.v.start":{$lt:data[1]}},{"bookss.v.end":{$gte:data[2]}}]}
+					],
+					$and:[{"bookss.v.stat":{$ne:'Отменено'}},{"bookss.v.stat":{$ne:'Ожидает'}}]
+					//"bookss.v.stat": {$ne : 'Отменено'},
+				}
+				aggr_find(a).then((resp)=>{console.log(182,resp)
+					if(resp.length!=0){io.to(socket.id).emit('reports',['clients_in_rooms',resp])}
+				}).catch(err=>{catch_err(err)})
+		}
+
 	})
 
 	socket.on('send_data',(data)=>{console.log(160,data)

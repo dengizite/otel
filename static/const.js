@@ -56,7 +56,7 @@ rooms_c=`
                 <option value="дороже">Сначала дороже</option>                     
             </select>            
 			<label class="m_child room_c">c <input class="m_child room_c" id="start_d" type="date"></label>
-			<label class="m_child room_c">до <input class="m_child room_c" id="end_d" type="date"></label>		
+			<label class="m_child room_c">до <input class="m_child room_c" id="end_d" type="date"></label>
         </div>
     </div>
     <div class="device_but">
@@ -73,7 +73,13 @@ klient_c=`
 </div>`,
 
 report_c=`
-<div id="report_control"></div>`,
+<div id="report_control">
+    <div class="device_but reports_child" id="report_clients_in_rooms">
+        <label class="m_child room_c">c <input class="m_child room_c" id="start_d" type="date"></label>
+        <label class="m_child room_c">до <input class="m_child room_c" id="end_d" type="date"></label>
+        <button class="buttons" onclick="reports(this)">Клиенты в номерах по выбранным датам</button>
+    </div>
+</div>`,
 
 add_r=`
 <div id="add_room">
@@ -97,9 +103,9 @@ add_r=`
      <button class="buttons" onclick="add_rooms(this)">Закрыть</button>
 </div>`,
 
-show_r=`
-<div id="show_room"></div>
-`,
+show_r=`<div id="show_room"></div>`,
+
+show_clients_in_r=`<div id="show_cl_in_r"></div>`,
 
 dupl_inf=`
 <div id="d_inf">

@@ -64,18 +64,24 @@ function data_from_cookie(name){
 	return prName
 }
 
-function get_data(el){const els=['booking_control','rooms_control','kl_control','report_control','show_room']
+function get_data(el){const els=['booking_control','rooms_control','kl_control','report_control','show_room','show_cl_in_r']
     els.forEach(i=>{let e=document.getElementById(i);if(e){e.remove()}})
     if(el.textContent==='Бронирования'){main_div.insertAdjacentHTML('beforeend',booking_c)}
     else if(el.textContent==='Номера'){
         main_div.insertAdjacentHTML('beforeend',rooms_c)
-        if(document.getElementById('cl_control')){ document.getElementById('addR').remove()}
-       
+        if(document.getElementById('cl_control')){ document.getElementById('addR').remove()}       
     }
     else if(el.textContent==='Клиенты'){main_div.insertAdjacentHTML('beforeend',klient_c)}
     else if(el.textContent==='Отчеты'){main_div.insertAdjacentHTML('beforeend',report_c)}
     else if(el.textContent==='История'){
         socket.emit('get_data',['books_kl',data_from_cookie('user='),data_from_cookie('pswd=')])
+    }
+}
+
+function reports(el){
+    if(el.textContent==='Клиенты в номерах по выбранным датам'){
+        if(!start_d.value||!end_d.value||end_d.valueAsNumber-start_d.valueAsNumber<0||end_d.valueAsNumber>Date.now()){alert('Выберите верные даты')}
+        else{socket.emit('get_data',['clients_in_rooms',start_d.valueAsNumber,end_d.valueAsNumber])}
     }
 }
 

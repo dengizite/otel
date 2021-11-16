@@ -142,6 +142,24 @@ socket.on('booking',(data)=>{console.log(data)
 	}
 })
 
+socket.on('reports',(data)=>{console.log(data)
+	let a=document.getElementById('show_cl_in_r');if(a){a.remove()}
+	main_div.insertAdjacentHTML('beforeend',show_clients_in_r)
+	if(data[0]==='clients_in_rooms'){
+		data[1].forEach(i=>{
+			i.bookss.v.start=new Date(i.bookss.v.start).toString().slice(0,-37)
+			i.bookss.v.end=new Date(i.bookss.v.end).toString().slice(0,-37)
+			show_cl_in_r.insertAdjacentHTML('beforeend',`<div class="rooms clients_in_r">
+			<p>Фамилия: ${i.bookss.v.fam}</p> 
+			<p>номер комнаты: ${i.bookss.v.room}</p> 
+			<p>заселение: ${i.bookss.v.start}</p>
+			<p>выезд: ${i.bookss.v.end}</p>
+			<p>оплачено: ${i.bookss.v.sum}</p>
+			</div>`)
+		})
+		}
+})
+
 socket.on('chat',(data)=>{console.log(data)})
 
 document.addEventListener('DOMContentLoaded',(e)=>{
