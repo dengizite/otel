@@ -123,7 +123,7 @@ function edit_r(el){console.log(el.parentElement);
             }
             else if(e.querySelector('p').className==='room'){
                 main_div.insertAdjacentHTML('beforeend',add_r);but_reg.textContent='Изменить'
-                add_number.value=d.num;add_price.value=d.price;add_room_bed.value=d.bad;
+                add_number.value=d._id;add_price.value=d.price;add_room_bed.value=d.bad;
                 add_room_cat.value=d.cat;add_descr_room.textContent=d.descr;
                 add_number.disabled=true
             }          
@@ -154,7 +154,10 @@ function rooms_contr(el){
         if(end_d.valueAsNumber-start_d.valueAsNumber<86400000||start_d.valueAsNumber<Date.now()||end_d.valueAsNumber<Date.now()){alert('Выберите верные даты')}
         socket.emit('get_data',['rooms_data',room_bed.value,room_cat.value,room_avail.value,room_sort.value,start_d.valueAsNumber,end_d.valueAsNumber])
     }
-    else if(el.textContent==='Добавить'){main_div.insertAdjacentHTML('beforeend',add_r)}
+    else if(el.textContent==='Добавить'){
+        main_div.insertAdjacentHTML('beforeend',add_r)
+       
+    }
 }
 
 function add_rooms(e){
@@ -187,10 +190,10 @@ function add_rooms(e){
                 }           
             }
             let el=document.getElementById('add_room');if (el){el.remove()}
-        }
-        
+        }        
     }
     else if(e.textContent==='Закрыть'){let el=document.getElementById('add_room');if (el){el.remove()}}
+    window.removeEventListener('load',Ready)
 }
 
 function Calendar3(id, year, month) {
@@ -231,4 +234,58 @@ function go_out() {
     let u=data_from_cookie('user='),p=data_from_cookie('pswd=')
     document.cookie=`user=${u};max-age=-1`;document.cookie=`pswd=${p}; max-age=-1`
     window.location.reload(true)
+}
+
+function add_photo(el) {
+    console.log(el.textContent);
+}
+
+function Ready(){ console.log('eeeeee')
+    if(window.File && window.FileReader){ //These are the relevant HTML5 objects that we are going to use 
+        document.getElementById('UploadButton').addEventListener('click', StartUpload);  
+        document.getElementById('FileBox').addEventListener('change', FileChosen);
+    }
+    else
+    {
+        document.getElementById('UploadArea').innerHTML = "Your Browser Doesn't Support The File API Please Update Your Browser";
+    }
+}
+
+let SelectedFile,FReader,Name
+function FileChosen(evnt) {
+    SelectedFile = evnt.target.files[0];
+    document.getElementById('NameBox').value = SelectedFile.name;
+}
+window.addEventListener("load", Ready); 
+function StartUpload(){
+    if(document.getElementById('FileBox').value != "")
+    {
+        FReader = new FileReader();
+        Name = document.getElementById('NameBox').value;
+        let Content = "<span id='NameArea'>Uploading " + SelectedFile.name + " as " + Name + "</span>";
+        Content += '<div id="ProgressContainer"><div id="ProgressBar"></div></div><span id="percent">0%</span>';
+        Content += "<span id='Uploaded'> - <span id='MB'>0</span>/" + Math.round(SelectedFile.size / 1048576) + "MB</span>";
+        document.getElementById('UploadArea').innerHTML = Content;
+        FReader.onload = function(evnt){
+            socket.emit('Upload', { 'Name' : Name, Data : evnt.target.result });
+        }
+        socket.emit('Start', { 'Name' : Name, 'Size' : SelectedFile.size });
+    }
+    else
+    {
+        alert("Please Select A File");
+    }
+}
+
+socket.on('MoreData', function (data){
+    UpdateBar(data['Percent']);
+    let Place=data['Place']*524288,NewFile=SelectedFile.slice(Place,Place+Math.min(524288,(SelectedFile.size-Place)));
+    FReader.readAsBinaryString(NewFile);
+});
+ 
+function UpdateBar(percent){
+    document.getElementById('ProgressBar').style.width = percent + '%';
+    document.getElementById('percent').innerHTML = (Math.round(percent*100)/100) + '%';
+    let MBDone = Math.round(((percent/100.0) * SelectedFile.size) / 1048576);
+    document.getElementById('MB').innerHTML = MBDone;
 }

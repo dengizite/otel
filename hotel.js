@@ -1,6 +1,10 @@
 import express from 'express';import {default as http_base} from 'http'
 import {default as io_base} from 'socket.io';import path from 'path'
 import {default as mongodb} from 'mongodb';
+import fs from 'fs';
+
+// exec = require('child_process').exec
+
 const MongoClient=mongodb.MongoClient,
 client=new MongoClient('mongodb+srv://dengizite:Egorka124@cluster0.p49dp.mongodb.net/hotel?retryWrites=true&w=majority'),
 event_close = "serverOpening", event_open = "serverClosed";
@@ -8,7 +12,7 @@ event_close = "serverOpening", event_open = "serverClosed";
 client.on(event_close,ev=>{console.log(40,`received ${event_close}: ${JSON.stringify(ev, null, 2)}`)})
 client.on(event_open,ev=>{console.log(45,`received ${event_open}: ${JSON.stringify(ev, null, 2)}`)}) 
 
-let dbRooms,dbUsers
+let dbRooms,dbUsers,Files = {}
 async function con_mongo(){
 	await client.connect();console.log('Connected')
 	dbRooms=client.db('hotel').collection('dates')
@@ -283,6 +287,73 @@ io.on('connection', (socket) => {
 			}).catch(err=>{catch_err(err)})
 		}
 	})
+
+	socket.on('Start', function (data) { //data contains the variables that we passed through in the html file
+        let Name = data['Name'];
+        Files[Name] = {  //Create a new Entry in The Files Variable
+            FileSize : data['Size'],
+            Data     : "",
+            Downloaded : 0
+        }
+        let Place = 0;
+        try{
+            let Stat = fs.statSync('Temp/' +  Name);
+            if(Stat.isFile())
+            {
+                Files[Name]['Downloaded'] = Stat.size;
+                Place = Stat.size / 524288;
+            }
+        }
+        catch(er){} //It's a New File
+        fs.open("Temp/" + Name, "a", '0755', function(err, fd){
+            if(err)
+            {
+                console.log(err);
+            }
+            else
+            {
+                Files[Name]['Handler'] = fd; //We store the file handler so we can write to it later
+                socket.emit('MoreData', { 'Place' : Place, Percent : 0 });
+            }
+        });
+	});
+
+	socket.on('Upload', function (data){
+        let Name = data['Name'];
+        Files[Name]['Downloaded'] += data['Data'].length;
+        Files[Name]['Data'] += data['Data'];
+        if(Files[Name]['Downloaded'] == Files[Name]['FileSize']) //If File is Fully Uploaded
+        {
+            fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen){
+                let inp = fs.createReadStream("Temp/" + Name);
+				let out = fs.createWriteStream("Video/" + Name);
+				inp.pipe(out);
+				inp.on("end", function() {
+					fs.unlink("Temp/" + Name, function (err) {
+						if (err) {
+							console.log(err);
+						} else {
+							console.log("Файл удалён");
+						}
+					})
+				 })
+            });
+        }
+        else if(Files[Name]['Data'].length > 10485760){ //If the Data Buffer reaches 10MB
+            fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen){
+                Files[Name]['Data'] = ""; //Reset The Buffer
+                let Place = Files[Name]['Downloaded'] / 524288;
+                let Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
+                socket.emit('MoreData', { 'Place' : Place, 'Percent' :  Percent});
+            });
+        }
+        else
+        {
+            let Place = Files[Name]['Downloaded'] / 524288;
+            let Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
+            socket.emit('MoreData', { 'Place' : Place, 'Percent' :  Percent});
+        }
+    });
 })
 
 http.listen(PORT, () => {console.log('listening on *:80')})

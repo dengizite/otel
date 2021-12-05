@@ -99,8 +99,9 @@ add_r=`
     </select>
     <label for="add_descr_room">Описание номера:</label>
     <textarea id="add_descr_room" name="add_descr_room" rows="5" cols="33"></textarea>
-     <button id="but_reg" class="buttons" onclick="add_rooms(this)">Добавить</button>
-     <button class="buttons" onclick="add_rooms(this)">Закрыть</button>
+    
+    <button id="but_reg" class="buttons" onclick="add_rooms(this)">Добавить</button>
+    <button class="buttons" onclick="add_rooms(this)">Закрыть</button>
 </div>`,
 
 show_r=`<div id="show_room"></div>`,
