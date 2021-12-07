@@ -13,16 +13,10 @@
 	</head>
 	<body>
 		<div class="head_but"><h1>Отель</h1></div>
-		<div id="main_div">
-			
-		</div>
-		<div id="UploadBox">        
-			<span id='UploadArea'>
-				<label for="FileBox">Choose A File: </label><input type="file" id="FileBox"><br>
-				<label for="NameBox">Name: </label><input type="text" id="NameBox"><br> 
-				<button  type='button' id='UploadButton' class='buttons'>Upload</button>
-			</span>
-		</div>
+		<div id="main_div"></div>
+		
+		<input type="file" id="load_img" multiple accept=".png, .jpg, .jpeg, .gif" onchange="loading(event)">
+		<button  type='button' id='getphoto' class='buttons' onclick="send_photos()">photo</button>
 
 		<script src="./socket.io/socket.io.js"></script>
 		<script src="./static/hotel_klient.js"></script>

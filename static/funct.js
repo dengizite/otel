@@ -87,6 +87,8 @@ function reports(el){
 
 function closes(el){el.parentElement.parentElement.remove()}
 
+function remove_image(el){el.parentElement.remove()}
+
 function count(){
     sum.textContent=(end_data.valueAsNumber-start_data.valueAsNumber)/1000/60/60/24*Number(price_num.value)   
 }
@@ -240,52 +242,59 @@ function add_photo(el) {
     console.log(el.textContent);
 }
 
-function Ready(){ console.log('eeeeee')
-    if(window.File && window.FileReader){ //These are the relevant HTML5 objects that we are going to use 
-        document.getElementById('UploadButton').addEventListener('click', StartUpload);  
-        document.getElementById('FileBox').addEventListener('change', FileChosen);
-    }
-    else
-    {
-        document.getElementById('UploadArea').innerHTML = "Your Browser Doesn't Support The File API Please Update Your Browser";
-    }
-}
-
-let SelectedFile,FReader,Name
-function FileChosen(evnt) {
-    SelectedFile = evnt.target.files[0];
-    document.getElementById('NameBox').value = SelectedFile.name;
-}
-window.addEventListener("load", Ready); 
-function StartUpload(){
-    if(document.getElementById('FileBox').value != "")
-    {
-        FReader = new FileReader();
-        Name = document.getElementById('NameBox').value;
-        let Content = "<span id='NameArea'>Uploading " + SelectedFile.name + " as " + Name + "</span>";
-        Content += '<div id="ProgressContainer"><div id="ProgressBar"></div></div><span id="percent">0%</span>';
-        Content += "<span id='Uploaded'> - <span id='MB'>0</span>/" + Math.round(SelectedFile.size / 1048576) + "MB</span>";
-        document.getElementById('UploadArea').innerHTML = Content;
-        FReader.onload = function(evnt){
-            socket.emit('Upload', { 'Name' : Name, Data : evnt.target.result });
-        }
-        socket.emit('Start', { 'Name' : Name, 'Size' : SelectedFile.size });
-    }
-    else
-    {
-        alert("Please Select A File");
-    }
-}
-
-socket.on('MoreData', function (data){
-    UpdateBar(data['Percent']);
-    let Place=data['Place']*524288,NewFile=SelectedFile.slice(Place,Place+Math.min(524288,(SelectedFile.size-Place)));
-    FReader.readAsBinaryString(NewFile);
+socket.on('MoreData', function (data){console.log(data)
+  let imgtag=`<img id="myimage" height="300">`
+  load_img.insertAdjacentHTML('afterend',imgtag)
+  console.log(data)
+myimage.src =  data;
 });
- 
-function UpdateBar(percent){
-    document.getElementById('ProgressBar').style.width = percent + '%';
-    document.getElementById('percent').innerHTML = (Math.round(percent*100)/100) + '%';
-    let MBDone = Math.round(((percent/100.0) * SelectedFile.size) / 1048576);
-    document.getElementById('MB').innerHTML = MBDone;
+
+async function loading(event) {
+    if(window.File && window.FileReader){
+      let files = Array.from(event.target.files)
+      let name='name',count=1
+      files.forEach(i=>{
+          if(!i.type.match('image')){return}
+          const reader = new FileReader()
+          reader.onload = function(ev) {
+              imageExists(ev.target.result, function(exists){
+                  if (exists){
+                      let n=name+'_'+count
+                      let imgtag=`<div class='images' id=${n}>
+                                    <button  type='button' onclick="remove_image(this)">&times</button>
+                                    <img title=${n} src=${ev.target.result} onclick="full_image(this)">
+                                <div>`
+                      load_img.insertAdjacentHTML('afterend',imgtag)
+                      count++
+                  }
+                  else {alert('Загружать можно только изображения')}
+              })
+          }
+          reader.readAsDataURL(i)
+      })
+        load_img.value=''
+    } 
+    else{alert("Для загрузки фото нужно использовать более современный браузер")}
+}
+
+async function send_photos(){
+    let images=document.querySelectorAll('img')
+    if(images){
+        images.forEach(i=>{socket.emit('MoreData',[i.src,i.title])})
+    }
+}
+
+function imageExists(url, callback) {
+    const img = new Image();
+    img.onload = function() { callback(true); };
+    img.onerror = function() { callback(false); };
+    img.src = url;
+}
+
+function full_image(el){
+    let image= `<div class='full_image'>
+                    <button  type='button' onclick="remove_image(this)">&times</button>
+                    <img src=${el.src}>
+                <div>`
+    main_div.insertAdjacentHTML('beforeend',image)
 }

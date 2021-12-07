@@ -44,3 +44,8 @@ datalist{overflow: auto;}
 
 .reports_child{background-color: darkgray;}
 .reports_child>BUTTON{width: auto;height: auto;}
+
+.images{position: relative;}
+.images>img{height: 100px;width: 100px;}
+.full_image, .images>button, .full_image>button{position: absolute;}
+.full_image{z-index: 5;}
