@@ -23,6 +23,7 @@ P{max-width:90%;padding:0.5rem 1rem;}
 INPUT{width: 12rem;}
 #price_num{width: auto;}
 #add_room,#log_form,#d_inf,#wind_b,#edit_book,#inf_b{position:absolute;background-color:#DCDCDC;left: 50%;transform: translate(-50%, 0);bottom:40%;width:80%;height:50%;z-index:3;border:0.5rem groove darkgrey;border-radius:1rem;color: black}
+#add_room{min-height:50%;height: unset;}
 #d_inf,#log_form,#edit_book{display: grid;justify-items: center;align-items: center;}
 #wind_b{display:grid;padding-left: 0.5rem;grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;overflow: auto;}
 .m_child{width: min-content;}
@@ -35,6 +36,8 @@ datalist{overflow: auto;}
 #add_descr_room {width:80%;height: 60%;}
 #show_room,#show_cl_in_r{position: absolute;width: 70%;left: 50%;transform: translate(-50%, 0);text-align:center;word-spacing:2rem;height: 50%;overflow:auto;margin-top:1rem;}
 .rooms{margin: 0.5rem; display: grid; grid: 2fr 2rem/33% 33% 33%;background-color: dimgrey;grid-column-gap: 0.1rem;justify-items: center;}
+.look_rooms{margin: 0.5rem;;background-color: dimgrey;}
+.img_prev{height: 100px;width: 100px;}
 .rooms>P{grid-column: 1/4;overflow-wrap: break-word;}
 .clients_in_r{display: block;text-align: start;}
 
@@ -49,3 +52,8 @@ datalist{overflow: auto;}
 .images>img{height: 100px;width: 100px;}
 .full_image, .images>button, .full_image>button{position: absolute;}
 .full_image{z-index: 5;}
+.images>button, .full_image>button{width: 1rem; opacity: 80%;}
+.parent_load_img{display: flex;}
+#load_img{width:7rem;}
+
+.books_klient{display: flex;border: double;}

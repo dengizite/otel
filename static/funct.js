@@ -21,21 +21,36 @@ function send_log(el){
             if(el.textContent==='Добавить'){let s=document.getElementById('show_room')
                 if(s){
                     let d=JSON.stringify({"name":new_name.value,"fam":new_fam.value,"pass":new_pass.value,"ident":new_ident.value,"tel":new_tel.value}),
-                    p=`<div class="rooms">
-                    <p class ="room" id="${new_ident.value}">${d}</p>
-                    <button class="" onclick="edit_r(this)">Бронирования</button>
-                    <button class="" onclick="edit_r(this)">Изменить</button>
-                    <button class="" onclick="edit_r(this)">Удалить</button>
-                    </div>
-                    `
+                    p=`<div class="look_rooms">
+                        <div id="${new_ident.value}">
+                            <p class ="user">Имя: ${new_name.value}</p>
+                            <p class ="user">Фамилия: ${new_fam.value}</p>
+                            <p class ="user">Пароль: ${new_pass.value}</p>
+                            <p class ="user">Номер паспорта: ${new_ident.value}</p>
+                            <p class ="user">Телефон: ${new_tel.value}</p>
+                        </div>
+                        <button class="buttons" onclick="edit_r(this)">Бронирования</button>
+                        <button class="buttons" onclick="edit_r(this)">Изменить</button>
+                        <button class="buttons" onclick="edit_r(this)">Удалить</button>
+                    </div>`
                     s.insertAdjacentHTML('afterbegin',p)
-                }           
+                }
             }
             else if(el.textContent==='Изменить'){
                 let s=document.getElementById(new_ident.value);
-                if(s){                    
-                    s.textContent=JSON.stringify({"name":new_name.value,"fam":new_fam.value,"pass":new_pass.value,"ident":new_ident.value,"tel":new_tel.value})
-                }           
+                if(s){
+                    let parent_s=s.parentElement;s.remove()
+                    let p=`<div id="${new_ident.value}">
+                                <p class ="user">Имя: ${new_name.value}</p>
+                                <p class ="user">Фамилия: ${new_fam.value}</p>
+                                <p class ="user">Пароль: ${new_pass.value}</p>
+                                <p class ="user">Номер паспорта: ${new_ident.value}</p>
+                                <p class ="user">Телефон: ${new_tel.value}</p>
+                            </div>`
+                        parent_s.insertAdjacentHTML('afterbegin',p)
+                /* if(s){
+                    s.textContent=JSON.stringify({"name":new_name.value,"fam":new_fam.value,"pass":new_pass.value,"ident":new_ident.value,"tel":new_tel.value}) */
+                }
             }
             let e=document.getElementById('log_form');if (e){e.remove()}            
         }
@@ -109,18 +124,31 @@ function send_book(){
     }   
 }
 
-function edit_r(el){console.log(el.parentElement);
+function edit_r(el){console.log(el.parentElement.querySelector('div'));
     let w=false; const e=['wind_b','log_form','edit_book','add_room','inf_b']
     e.forEach(i=>{if(document.getElementById(i)){w=true}})
     if(!w){
-        let e=el.parentElement, d=JSON.parse(e.querySelector('p').textContent)
-        socket.emit('edit_data',[el.textContent,e.querySelector('p').className ,e.querySelector('p').id,d.price,Date.parse(d.start)+10800000,Date.parse(d.end)+10800000])
-        if(el.textContent==='Удалить'){e.remove()}
+        let e=el.parentElement.querySelector('div'),d={},els_p
+        if(el.textContent==='Забронировать'||el.textContent==='Изменить'||el.textContent==='Удалить'||el.textContent==='Бронирования'||el.textContent==='Бронировать'){
+            els_p=Array.from(e.children);console.log(els_p)
+            if(e.querySelector('p').className==='room'){
+                d._id=els_p[0].textContent.split(' ').pop();d.bad=els_p[1].textContent.split(' ').pop();
+                d.cat=els_p[2].textContent.split(' ').pop();d.price=els_p[3].textContent.split(' ').pop();
+                d.descr=els_p[4].textContent.split(' ').pop()
+            }
+            else if(e.querySelector('p').className==='user'){d._id=els_p[3].textContent.split(' ').pop()}
+        }
+        else if(el.textContent==='Подтвердить'||el.textContent==='Отменить'){d._id=e.id}
+        console.log(d)
+        socket.emit('edit_data',[el.textContent,e.querySelector('p').className ,d._id,d.price,Date.parse(d.start)+10800000,Date.parse(d.end)+10800000])
+        if(el.textContent==='Удалить'){e.parentElement.remove()}
         else if(el.textContent==='Изменить'){
             if(e.querySelector('p').className==='user'){
                 main_div.insertAdjacentHTML('beforeend',window_reg);but_reg.textContent='Изменить'
-                new_name.value=d.name;new_fam.value=d.fam;new_pass.value=d.pass;
-                new_ident.value=d.ident;new_tel.value=d.tel;
+                new_name.value=els_p[0].textContent.split(' ').pop();
+                new_fam.value=els_p[1].textContent.split(' ').pop();
+                new_pass.value=els_p[2].textContent.split(' ').pop();
+                new_ident.value=els_p[3].textContent.split(' ').pop();new_tel.value=els_p[4].textContent.split(' ').pop()
                 new_ident.disabled=true
             }
             else if(e.querySelector('p').className==='room'){
@@ -128,14 +156,25 @@ function edit_r(el){console.log(el.parentElement);
                 add_number.value=d._id;add_price.value=d.price;add_room_bed.value=d.bad;
                 add_room_cat.value=d.cat;add_descr_room.textContent=d.descr;
                 add_number.disabled=true
-            }          
+                if(els_p.length>5){
+                    for(let i=5;i<els_p.length;i++) {
+                        let imgtag=`<div class='images' id=${els_p[i].title}>
+                                    <button  type='button' onclick="remove_image(this)">&times</button>
+                                    <img title=${els_p[i].title} src=${els_p[i].src} onclick="full_image(this)">
+                                <div>`
+                      load_img.insertAdjacentHTML('afterend',imgtag)
+                    }
+                }
+            }
         }
         else if(el.textContent==='Подтвердить'){
-            e.querySelector('p').textContent=e.querySelector('p').textContent.replace('Ожидает','Подтверждено')
+            let stat=el.parentElement.querySelector('div').lastElementChild
+            stat.textContent=stat.textContent.replace('Ожидает','Подтверждено')          
             
         }
-        else if(el.textContent==='Отменить'){
-            e.querySelector('p').textContent=e.querySelector('p').textContent.replace('Ожидает','Отменено')
+        else if(el.textContent==='Отменить'){            
+            let stat=el.parentElement.querySelector('div').lastElementChild
+            stat.textContent=stat.textContent.replace('Ожидает','Подтверждено')
         }
     }
 }
@@ -170,32 +209,48 @@ function add_rooms(e){
         else if(add_room_bed.value==="Мест"){alert('Укажите вместимость номера')}
         else if(add_room_cat.value==="Категория"){alert('Укажите категорию номера')}
         else {
+            let images=add_room.querySelectorAll('img'),m=[]
+            if(images){images.forEach(i=>{m.push([i.src,i.title])})}
+           // if(m.length!=0){socket.emit('MoreData',m)}
+
             let c;if(e.textContent==='Добавить'){c='add_room'}else{c='change_room'}
-            socket.emit('send_data',[c,add_number.value,add_price.value,add_room_bed.value,add_room_cat.value,add_descr_room.value])            
+            socket.emit('send_data',[c,add_number.value,add_price.value,add_room_bed.value,add_room_cat.value,add_descr_room.value,m])
             if(e.textContent==='Добавить'){let s=document.getElementById('show_room')
                 if(s){
                     let d=JSON.stringify({"num":add_number.value,"price":add_price.value,"bad":add_room_bed.value,"cat":add_room_cat.value,"descr":add_descr_room.value}),
                     p=`<div class="rooms">
-                    <p class ="room" id="${add_number.value}">${d}</p>
-                    <button class="" onclick="edit_r(this)">Забронировать</button>
-                    <button class="" onclick="edit_r(this)">Изменить</button>
-                    <button class="" onclick="edit_r(this)">Удалить</button>
-                    </div>
-                    `
+                            <p id="${add_number.value}">${d}</p>
+                            <button onclick="edit_r(this)">Забронировать</button>
+                            <button onclick="edit_r(this)">Изменить</button>
+                            <button onclick="edit_r(this)">Удалить</button>
+                    </div>`
                     s.insertAdjacentHTML('afterbegin',p)
-                }           
+                }
             }
             else if(e.textContent==='Изменить'){
                 let s=document.getElementById(add_number.value);
-                if(s){                    
-                    s.textContent=JSON.stringify({"num":add_number.value,"price":add_price.value,"bad":add_room_bed.value,"cat":add_room_cat.value,"descr":add_descr_room.value})
-                }           
+                if(s){
+                    let parent_s=s.parentElement;s.remove()
+                    let p=`<div id="${add_number.value}">
+                            <p class ="room">Номер комнаты: ${add_number.value}</p>
+                            <p class ="room">Количество мест: ${add_room_bed.value}</p>
+                            <p class ="room">Категория: ${add_room_cat.value}</p>
+                            <p class ="room">Цена за сутки: ${add_price.value}</p>
+                            <p class ="room">Описание: ${add_descr_room.value}</p>
+                        </div>`
+                        parent_s.insertAdjacentHTML('afterbegin',p)
+                     if(m.length!=0){
+                        let el=document.getElementById(add_number.value)
+                        m.forEach(i=>{
+                            el.insertAdjacentHTML('beforeend',`<img class="img_prev" title=${i[1]} src=${i[0]} onclick="full_image(this)">`)
+                        })
+                    }
+                }
             }
             let el=document.getElementById('add_room');if (el){el.remove()}
         }        
     }
-    else if(e.textContent==='Закрыть'){let el=document.getElementById('add_room');if (el){el.remove()}}
-    window.removeEventListener('load',Ready)
+    else if(e.textContent==='Закрыть'){let el=document.getElementById('add_room');if (el){el.remove()}}   
 }
 
 function Calendar3(id, year, month) {
@@ -238,10 +293,6 @@ function go_out() {
     window.location.reload(true)
 }
 
-function add_photo(el) {
-    console.log(el.textContent);
-}
-
 socket.on('MoreData', function (data){console.log(data)
   let imgtag=`<img id="myimage" height="300">`
   load_img.insertAdjacentHTML('afterend',imgtag)
@@ -278,10 +329,11 @@ async function loading(event) {
 }
 
 async function send_photos(){
-    let images=document.querySelectorAll('img')
+    let images=document.querySelectorAll('img'),m=[]
     if(images){
-        images.forEach(i=>{socket.emit('MoreData',[i.src,i.title])})
+        images.forEach(i=>{m.push([i.src,i.title])})
     }
+    if(m.length!=0){socket.emit('MoreData',m)}
 }
 
 function imageExists(url, callback) {

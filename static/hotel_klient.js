@@ -22,12 +22,20 @@ socket.on('get_data',(data)=>{console.log(data)
 		data[1].forEach(i=>{console.log(i.bookss.v)
 			i.bookss.v.start=new Date(i.bookss.v.start).toDateString()
 			i.bookss.v.end=new Date(i.bookss.v.end).toDateString()
-			let p=`<div class="rooms">
-				<p class ="book" id="${i.bookss.v.room}_${i.bookss.v.num_book}">${JSON.stringify(i.bookss.v)}</p>
-				<button class="buttons" onclick="edit_r(this)">Подтвердить</button>
-				<button class="buttons" onclick="edit_r(this)">Отменить</button>
-			</div>
-			`
+			let p=`<div class="look_rooms">
+					<div id="${i.bookss.v.room}_${i.bookss.v.num_book}">
+						<p class ="room">Номер бронирования: ${i.bookss.v.num_book}</p>
+						<p class ="room">Номер комнаты: ${i.bookss.v.room}</p>
+						<p class ="room">Клиент: ${i.bookss.v.fam}</p>
+						<p class ="room">Паспорт: ${i.bookss.v.pasp}</p>
+						<p class ="room">Начало: ${i.bookss.v.start}</p>
+						<p class ="room">Окончание: ${i.bookss.v.end}</p>
+						<p class ="room">Сумма: ${i.bookss.v.sum}</p>
+						<p class ="room">Статус: ${i.bookss.v.stat}</p>
+					</div>
+					<button class="buttons" onclick="edit_r(this)">Подтвердить</button>
+					<button class="buttons" onclick="edit_r(this)">Отменить</button>
+				</div>`
 			show_room.insertAdjacentHTML('beforeend',p)
 		})
 	}
@@ -37,43 +45,60 @@ socket.on('get_data',(data)=>{console.log(data)
 			let id_num,p
 			data[1][i]._id?id_num=data[1][i]._id:id_num=data[1][i].num
 			if(document.getElementById('cl_control')){
-				p=`<div class="rooms">
+				/* p=`<div class="rooms">
 				<p class ="room" id="${id_num}">${JSON.stringify(data[1][i])}</p>
-				<button class="buttons" onclick="edit_r(this)">Бронировать</button>				
+				<button class="buttons" onclick="edit_r(this)">Бронировать</button>
 				</div>
-				`
+				` */
+				p=`<div class="look_rooms">
+					<div id="${id_num}">
+						<p class ="room">Номер комнаты: ${id_num}</p>
+						<p class ="room">Количество мест: ${data[1][i].bad}</p>
+						<p class ="room">Категория: ${data[1][i].cat}</p>
+						<p class ="room">Цена за сутки: ${data[1][i].price}</p>
+						<p class ="room">Описание: ${data[1][i].descr}</p>
+					</div>
+					<button class="buttons" onclick="edit_r(this)">Бронировать</button>
+				</div>`
 			}
 			else{
-				p=`<div class="rooms">
-				<p class ="room" id="${id_num}">${JSON.stringify(data[1][i])}</p>
+				p=`<div class="look_rooms">
+				<div id="${id_num}">
+					<p class ="room">Номер комнаты: ${id_num}</p>
+					<p class ="room">Количество мест: ${data[1][i].bad}</p>
+					<p class ="room">Категория: ${data[1][i].cat}</p>
+					<p class ="room">Цена за сутки: ${data[1][i].price}</p>
+					<p class ="room">Описание: ${data[1][i].descr}</p>
+				</div>
 				<button class="buttons" onclick="edit_r(this)">Забронировать</button>
 				<button class="buttons" onclick="edit_r(this)">Изменить</button>
 				<button class="buttons" onclick="edit_r(this)">Удалить</button>
-				</div>
-				`
+				</div>`
 			}
 			show_room.insertAdjacentHTML('beforeend',p)
+			if(data[1][i].images&&data[1][i].images.length!=0){
+				let el=document.getElementById(id_num)
+				data[1][i].images.forEach(i=>{
+					el.insertAdjacentHTML('beforeend',`<img class="img_prev" title=${i[1]} src=${i[0]} onclick="full_image(this)">`)
+				})
+			}
+			
 		}
-		/* data[1].forEach(j=>{console.log(j)
-			let p=`<div class="rooms">
-				<p class ="room" id="${j['num']}">№ - ${j['num']}; цена - ${j['price']}; мест - ${j['bad']}; категория - ${j['cat']}; статус - ${j['stat']}; описание - ${j['descr']}</p>
-				<button class="" onclick="edit_r(this)">Забронировать</button>
-				<button class="" onclick="edit_r(this)">Изменить</button>
-				<button class="" onclick="edit_r(this)">Удалить</button>
-				</div>
-				`
-				show_room.insertAdjacentHTML('beforeend',p)
-		})	 */
 	}
 	else if(data[0]==='kl_data'){
 		for(let i in data[1]){console.log(data[1][i])
-			let p=`<div class="rooms">
-			<p class ="user" id="${data[1][i].ident}">${JSON.stringify(data[1][i])}</p>
-			<button class="buttons" onclick="edit_r(this)">Бронирования</button>
-			<button class="buttons" onclick="edit_r(this)">Изменить</button>
-			<button class="buttons" onclick="edit_r(this)">Удалить</button>
-			</div>
-			`
+			let p=`<div class="look_rooms">
+				<div id="${data[1][i].ident}">
+					<p class ="user">Имя: ${data[1][i].name}</p>
+					<p class ="user">Фамилия: ${data[1][i].fam}</p>
+					<p class ="user">Пароль: ${data[1][i].pass}</p>
+					<p class ="user">Номер паспорта: ${data[1][i].ident}</p>
+					<p class ="user">Телефон: ${data[1][i].tel}</p>
+				</div>
+				<button class="buttons" onclick="edit_r(this)">Бронирования</button>
+				<button class="buttons" onclick="edit_r(this)">Изменить</button>
+				<button class="buttons" onclick="edit_r(this)">Удалить</button>
+				</div>`
 			show_room.insertAdjacentHTML('beforeend',p)
 		}
 	}
@@ -91,13 +116,19 @@ socket.on('get_data',(data)=>{console.log(data)
 	if(data[0]==='books_kl'){
 		data[1].forEach(i=>{console.log(i.bookss.v)
 			i.bookss.v.start=new Date(i.bookss.v.start).toDateString()
-			i.bookss.v.end=new Date(i.bookss.v.end).toDateString()
-			let p=`<div class="rooms">
-				<p class ="book" id="${i.bookss.v.room}_${i.bookss.v.num_book}">${JSON.stringify(i.bookss.v)}</p>
-				<button class="buttons" onclick="edit_r(this)">Подтвердить</button>
-				<button class="buttons" onclick="edit_r(this)">Отменить</button>
-			</div>
-			`
+			i.bookss.v.end=new Date(i.bookss.v.end).toDateString()			
+			let p=`<div class="look_rooms">
+					<div id="${i.bookss.v.room}_${i.bookss.v.num_book}">
+						<p class ="room">Номер бронирования: ${i.bookss.v.num_book}</p>
+						<p class ="room">Номер комнаты: ${i.bookss.v.room}</p>
+						<p class ="room">Начало: ${i.bookss.v.start}</p>
+						<p class ="room">Окончание: ${i.bookss.v.end}</p>
+						<p class ="room">Сумма: ${i.bookss.v.sum}</p>
+						<p class ="room">Статус: ${i.bookss.v.stat}</p>
+					</div>
+					<button class="buttons" onclick="edit_r(this)">Подтвердить</button>
+					<button class="buttons" onclick="edit_r(this)">Отменить</button>
+				</div>`
 			show_room.insertAdjacentHTML('beforeend',p)
 		})
 	}
@@ -131,8 +162,17 @@ socket.on('booking',(data)=>{console.log(data)
 			i.bookss.v.start=new Date(i.bookss.v.start).toDateString()
 			i.bookss.v.end=new Date(i.bookss.v.end).toDateString()
 			delete i.bookss.v.pasp
-			inf_b.insertAdjacentHTML('beforeend',`<div>${JSON.stringify(i.bookss.v)}</div>`)}
-			)
+			let p=`<div class='books_klient'>
+				<p class ="room">Номер бронирования: ${i.bookss.v.num_book}</p>
+				<p class ="room">Номер комнаты: ${i.bookss.v.room}</p>
+				<p class ="room">Клиент: ${i.bookss.v.fam}</p>				
+				<p class ="room">Начало: ${i.bookss.v.start}</p>
+				<p class ="room">Окончание: ${i.bookss.v.end}</p>
+				<p class ="room">Сумма: ${i.bookss.v.sum}</p>
+				<p class ="room">Статус: ${i.bookss.v.stat}</p>
+			</div>`
+			inf_b.insertAdjacentHTML('beforeend',p)
+		})
 	}
 	else if(data[1]==='busy_book'){
 		let b=document.getElementById('busy_b');if(b){setTimeout(()=>{b.remove()},1000)}}

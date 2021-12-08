@@ -1,9 +1,7 @@
 import express from 'express';import {default as http_base} from 'http'
 import {default as io_base} from 'socket.io';import path from 'path'
 import {default as mongodb} from 'mongodb';
-import fs from 'fs';
-import { promisify } from 'util';
-let readFile = promisify(fs.readFile), writeFile = promisify(fs.writeFile)
+//import fs from 'fs';
 
 const MongoClient=mongodb.MongoClient,
 client=new MongoClient('mongodb+srv://dengizite:Egorka124@cluster0.p49dp.mongodb.net/hotel?retryWrites=true&w=majority'),
@@ -42,18 +40,18 @@ async function aggr_find(a){return dbRooms.aggregate([
 ]).toArray()}
 async function find_occup_room(a,b,c){return dbRooms.aggregate(
 	[
-		{$project: {_id:0,bookss:{$objectToArray:"$books"},bad:1,cat:1,price:1,num:1,descr:1,books:1}},
+		{$project: {_id:0,bookss:{$objectToArray:"$books"},bad:1,cat:1,price:1,num:1,descr:1,books:1,images:1}},
 		{$unwind:{path:"$bookss",preserveNullAndEmptyArrays:true}},
 		{$match:a},
 		{$match:{$or:[{"bookss.v.stat":'Подтверждено'},{"bookss.v.stat":'Ожидает'}]}},
-		{$group: {_id:'$num',bad:{'$first':'$bad'},cat:{'$first':'$cat'},price:{'$first':'$price'},descr:{'$first':'$descr'}}},
+		{$group: {_id:'$num',bad:{'$first':'$bad'},cat:{'$first':'$cat'},price:{'$first':'$price'},descr:{'$first':'$descr'},images:{'$first':'$res.images'}}},
 		{$match:b}
 	]
 	).sort(c).toArray()
 }
 async function find_free_room(a,b,c){return dbRooms.aggregate(
 	[
-		{$project: {_id:0,bookss:{$objectToArray:"$books"},bad:1,cat:1,price:1,num:1,descr:1,books:1}},
+		{$project: {_id:0,bookss:{$objectToArray:"$books"},bad:1,cat:1,price:1,num:1,descr:1,books:1,images:1}},
 		{$unwind:{path:"$bookss",preserveNullAndEmptyArrays:true}},
 		{$match:a},
 		{$match:{$or:[{"bookss.v.stat":'Подтверждено'},{"bookss.v.stat":'Ожидает'}]}},
@@ -62,7 +60,7 @@ async function find_free_room(a,b,c){return dbRooms.aggregate(
 			{from:"dates",let:{n:"$nums"},pipeline:[{$match:{$expr:{$not:{$in:["$num",'$$n']}}}}],as:"res"} 
 		}, 
 		{$project: {res:1,_id:0}},{$unwind :"$res"},
-		{$group:{_id:'$res.num',bad:{'$first':'$res.bad'},cat:{'$first':'$res.cat'},price:{'$first':'$res.price'},descr:{'$first':'$res.descr'}}},
+		{$group:{_id:'$res.num',bad:{'$first':'$res.bad'},cat:{'$first':'$res.cat'},price:{'$first':'$res.price'},descr:{'$first':'$res.descr'},images:{'$first':'$res.images'}}},
 		{$match:b}
 	]
 	).sort(c).toArray()
@@ -165,13 +163,11 @@ io.on('connection', (socket) => {
 		if(data[0]==='books_kl'){
 			let q={'fam':data[1],'pass':data[2]}
 			find(q,dbUsers,{},{_id:0,ident:1}).then((resp)=>{
-				let a={"bookss.v.fam":data[1],"bookss.v.pasp":resp[0].ident}
-				console.log(a)
-				aggr_find(a).then((resp)=>{console.log(161,resp);
-					io.to(socket.id).emit('get_data',['books_kl',resp])
-				}).catch(err=>{catch_err(err)}) 
+				let a={"bookss.v.pasp":resp[0].ident}
+				aggr_find(a).then((resp)=>{io.to(socket.id).emit('get_data',['books_kl',resp])})
+				.catch(err=>{catch_err(err)}) 
 			})
-			.catch(err=>{catch_err(err,socket.id)})				
+			.catch(err=>{catch_err(err,socket.id)})
 		}
 		else if(data[0]==='clients_in_rooms'){
 			let a={$or:[
@@ -189,7 +185,7 @@ io.on('connection', (socket) => {
 
 	})
 
-	socket.on('send_data',(data)=>{console.log(160,data)
+	socket.on('send_data',(data)=>{//console.log(160,data[6])
 		if(data[0]==='add_client'){
 			insrt_user({'name':data[1],'fam':data[2],'pass':data[3],'ident':data[4],'tel':data[5]},dbUsers)
 			.then((resp)=>{console.log(resp)})
@@ -201,12 +197,20 @@ io.on('connection', (socket) => {
 			.catch(err=>{catch_err(err,socket.id)})
 		}
 		else if(data[0]==='add_room'){
-			insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'books':{}},dbRooms)
-			.then((resp)=>{console.log(resp)})
+			insrt_user({'num':data[1],'price':Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'books':{},'images':data[6]},dbRooms)
+			.then((resp)=>{
+				console.log(resp)
+				/* data[6].forEach(i => {
+					fs.writeFile(i[1], i[0], function (err) {
+						if (err) return console.log(err);
+						console.log(i[1]);
+					});
+				}); */
+			})
 			.catch(err=>{catch_err(err,socket.id)})
 		}
 		else if(data[0]==='change_room'){
-			upd({'num':data[1]},dbRooms,{$set:{"price":Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5]}})
+			upd({'num':data[1]},dbRooms,{$set:{"price":Number(data[2]),'bad':data[3],'cat':data[4],'descr':data[5],'images':data[6]}})
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})
 		}
@@ -288,19 +292,21 @@ io.on('connection', (socket) => {
 		}
 	})
 
-	socket.on('MoreData', function (data){
-/* 		fs.readFile("helloworld.txt", "utf8", 
+/* 	socket.on('MoreData', function (data){
+		fs.readFile("helloworld.txt", "utf8", 
             function(error,data){
                 console.log("Асинхронное чтение файла");
                 if(error) throw error; // если возникла ошибка
 				socket.emit('MoreData', data)
-}); */
-fs.writeFile(data[1], data[0], function (err) {
-	if (err) return console.log(err);
-	console.log(data[1]);
-  });
-	})
+});
+		data.forEach(i => {
+			fs.writeFile(i[1], i[0], function (err) {
+				if (err) return console.log(err);
+				console.log(i[1]);
+			});
+		});
 
+	}) */
 
 })
 

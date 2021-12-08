@@ -98,10 +98,10 @@ add_r=`
         <option value="Эконом">Эконом</option>            
     </select>
     <label for="add_descr_room">Описание номера:</label>
-    <textarea id="add_descr_room" name="add_descr_room" rows="5" cols="33"></textarea>
-    
+    <textarea id="add_descr_room" name="add_descr_room" rows="5" cols="33"></textarea>    
     <button id="but_reg" class="buttons" onclick="add_rooms(this)">Добавить</button>
     <button class="buttons" onclick="add_rooms(this)">Закрыть</button>
+    <div class="parent_load_img"><input type="file" id="load_img" multiple accept=".png, .jpg, .jpeg, .gif" onchange="loading(event)"></div>
 </div>`,
 
 show_r=`<div id="show_room"></div>`,
