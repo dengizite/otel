@@ -1,7 +1,7 @@
 import express from 'express';import {default as http_base} from 'http'
 import {default as io_base} from 'socket.io';import path from 'path'
 import {default as mongodb} from 'mongodb';
-//import fs from 'fs';
+import fs from 'fs';
 
 const MongoClient=mongodb.MongoClient,
 client=new MongoClient('mongodb+srv://dengizite:Egorka124@cluster0.p49dp.mongodb.net/hotel?retryWrites=true&w=majority'),
@@ -44,7 +44,7 @@ async function find_occup_room(a,b,c){return dbRooms.aggregate(
 		{$unwind:{path:"$bookss",preserveNullAndEmptyArrays:true}},
 		{$match:a},
 		{$match:{$or:[{"bookss.v.stat":'Подтверждено'},{"bookss.v.stat":'Ожидает'}]}},
-		{$group: {_id:'$num',bad:{'$first':'$bad'},cat:{'$first':'$cat'},price:{'$first':'$price'},descr:{'$first':'$descr'},images:{'$first':'$res.images'}}},
+		{$group: {_id:'$num',bad:{'$first':'$bad'},cat:{'$first':'$cat'},price:{'$first':'$price'},descr:{'$first':'$descr'},images:{'$first':'$images'}}},
 		{$match:b}
 	]
 	).sort(c).toArray()
@@ -292,13 +292,13 @@ io.on('connection', (socket) => {
 		}
 	})
 
-/* 	socket.on('MoreData', function (data){
-		fs.readFile("helloworld.txt", "utf8", 
+	socket.on('MoreData', function (data){console.log(data)
+	/* 	fs.readFile("helloworld.txt", "utf8", 
             function(error,data){
                 console.log("Асинхронное чтение файла");
                 if(error) throw error; // если возникла ошибка
 				socket.emit('MoreData', data)
-});
+}); */
 		data.forEach(i => {
 			fs.writeFile(i[1], i[0], function (err) {
 				if (err) return console.log(err);
@@ -306,7 +306,7 @@ io.on('connection', (socket) => {
 			});
 		});
 
-	}) */
+	})
 
 })
 

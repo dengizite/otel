@@ -302,11 +302,11 @@ myimage.src =  data;
 
 async function loading(event) {
     if(window.File && window.FileReader){
-      let files = Array.from(event.target.files)
-      let name='name',count=1
-      files.forEach(i=>{
+        let files = Array.from(event.target.files)
+        let name='name',count=1
+        files.forEach(function(i) {
           if(!i.type.match('image')){return}
-          const reader = new FileReader()
+          /* const reader = new FileReader()
           reader.onload = function(ev) {
               imageExists(ev.target.result, function(exists){
                   if (exists){
@@ -321,11 +321,49 @@ async function loading(event) {
                   else {alert('Загружать можно только изображения')}
               })
           }
-          reader.readAsDataURL(i)
-      })
+          reader.readAsDataURL(i) */
+          imageExists(URL.createObjectURL(i),async function(exists){
+            if (exists){
+                const inputPreview = new Image();
+                inputPreview.src = URL.createObjectURL(i);
+                const {height, width} = await getImageDimensions(inputPreview);
+                const MAX_WIDTH = 900, MAX_HEIGHT = 600; 
+                const widthRatioBlob = await compressImage(inputPreview, MAX_WIDTH / width, width, height); 
+                const heightRatioBlob = await compressImage(inputPreview, MAX_HEIGHT / height, width, height);
+                const compressedBlob = widthRatioBlob.length > heightRatioBlob.length ? heightRatioBlob : widthRatioBlob;
+                let n=name+'_'+count
+                let imgtag=`<div class='images' id=${n}>
+                                <button type='button' onclick="remove_image(this)">&times</button>
+                                <img title=${n} src=${compressedBlob} onclick="full_image(this)">
+                            <div>`
+                load_img.insertAdjacentHTML('afterend',imgtag)
+                count++
+            }
+            else {alert('Загружать можно только изображения')}
+          })
+        })
         load_img.value=''
     } 
     else{alert("Для загрузки фото нужно использовать более современный браузер")}
+}
+
+function compressImage(image, scale, initalWidth, initalHeight){
+    const canvas = document.createElement("canvas");
+    canvas.width = scale * initalWidth;
+    canvas.height = scale * initalHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL('image/jpeg',1);
+}
+
+function getImageDimensions(image){
+    return new Promise((resolve, reject) => {
+        image.onload = function(e){
+            const width = this.width;
+            const height = this.height;
+            resolve({height, width});
+        }
+    });
 }
 
 async function send_photos(){
@@ -333,6 +371,7 @@ async function send_photos(){
     if(images){
         images.forEach(i=>{m.push([i.src,i.title])})
     }
+    console.log(m)
     if(m.length!=0){socket.emit('MoreData',m)}
 }
 
