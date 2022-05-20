@@ -69,7 +69,7 @@ async function find_free_room(a,b,c){return dbRooms.aggregate(
 const app=express(),http=http_base.createServer(app),io=io_base(http),__dirname = path.resolve(),PORT=process.env.PORT||8080,clients={}
 app.use(express.static(".")); 
 app.get('/', (req, res) => {res.sendFile (__dirname + '/static/index.html' )})
-
+app.get('/about', (req, res) => {res.sendFile (__dirname + '/static/about.html' )})
 io.on('connection', (socket) => {
 	io.to(socket.id).emit('chat',['подключился',socket.id]); console.log ('yes conns', socket.id);	
 	
