@@ -1,7 +1,7 @@
 const 
 reg_butt=`<div id="reg_b" class="device_but">
-		<button id="button_reg" class="buttons" onclick="login(this)">Регистрация</button>
-		<button id="button_autoriz" class="buttons" onclick="login(this)">Вход</button>
+		<button id="button_reg" class="btn btn-primary buttons" onclick="login(this)">Регистрация</button>
+		<button id="button_autoriz" class="btn btn-primary buttons" onclick="login(this)">Вход</button>
 	</div>`,
 window_reg=`<div id="log_form">
 	<input type="text" maxlength="25" id="new_name" placeholder="Введите имя"/>
