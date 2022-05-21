@@ -203,7 +203,9 @@ socket.on('reports',(data)=>{console.log(data)
 socket.on('chat',(data)=>{console.log(data)})
 
 document.addEventListener('DOMContentLoaded',(e)=>{
-	let ind1 = document.cookie.match(/user=/)
+	let ind1 = document.cookie.match(/user=/),
+	logButton=document.getElementById('logInOut'),regButton=document.getElementById('registerButt')
+	console.log(logButton)
 	if (document.cookie&&ind1!==null){console.log(333)
 		/* let n_c=data_from_cookie('user=')		
 		simbols.forEach(el=>{
@@ -212,7 +214,7 @@ document.addEventListener('DOMContentLoaded',(e)=>{
 
 		socket.emit('check_in',['check',data_from_cookie('user='),data_from_cookie('pswd=')])
 	}
-	else{
+	/* else{
 		main_div.insertAdjacentHTML('beforeend',reg_butt)
-	}
+	} */
 })

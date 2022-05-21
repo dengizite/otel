@@ -72,14 +72,15 @@
     
     <!-- Custom styles for this template -->
     <link href="./static/navbarbootstrap.css" rel="stylesheet">
+    <link href="./static/dashboard.css" rel="stylesheet">
   </head>
   <body>
     
 <main>
  
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Eleventh navbar example">
+  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark" aria-label="Eleventh navbar example">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <a class="navbar-brand" href="#">Отель</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample09" aria-controls="navbarsExample09" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -103,32 +104,163 @@
             </form>
           </li>
           <li class="nav-item dropstart">
-            <a class="nav-link active dropdown-toggle" href="#" id="dropdown09" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</a>
+            <a class="nav-link active dropdown-toggle" href="#" id="dropdown09" data-bs-toggle="dropdown" aria-expanded="false">Авторизация</a>
             <ul class="dropdown-menu" aria-labelledby="dropdown09">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
+              <li><a id="logInOut" onclick="login(this)" class="dropdown-item" href="#">Вход</a></li>
+              <li><a id="registerButt" onclick="login(this)" class="dropdown-item" href="#">Регистрация</a></li>
             </ul>
           </li>
         </ul>
       </div>
     </div>
   </nav>
+ 
+  
+  <div class="container-fluid">
+    
+    <div class=" row">
+      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+        <div class="position-sticky pt-3">
+          <!-- <div id="rooms_control"> -->
+          <!--   <div class="device_but"> -->
+               <!--  <div id="child_dev_but"> -->
+                  <ul class="nav flex-column">
+                    <li class="nav-item">
+                      <select class="room_c" id="room_bed">
+                          <option selected value="Мест">Мест</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="4">4</option>
+                      </select>
+                    </li>
+                    <li class="nav-item">
+                      <select class="room_c" id="room_cat">
+                          <option selected value="Категория">Категория</option>
+                          <option value="Люкс">Люкс</option>
+                          <option value="Стандарт">Стандарт</option>
+                          <option value="Эконом">Эконом</option>
+                      </select>
+                    </li>
+                    <li class="nav-item">
+                      <select class="room_c" id="room_avail">
+                          <option selected value="Свободен">Свободен</option>
+                          <option value="Занят">Занят</option>
+                      </select>
+                    </li>
+                    <li class="nav-item">
+                      <select class="room_c" id="room_sort">
+                          <option selected value="Сортировка">Сортировка</option>
+                          <option value="дешевле">Сначала дешевле</option>
+                          <option value="дороже">Сначала дороже</option>
+                      </select>
+                    </li>
+                    <li class="nav-item">
+                      <label class="m_child room_c">c <input class="m_child room_c" id="start_d" type="date"></label>
+                    </li>
+                    <li class="nav-item">
+                      <label class="m_child room_c">до <input class="m_child room_c" id="end_d" type="date"></label>
+                    </li>
+                  </ul>
+               <!--  </div> -->
+              
+          <!--   </div> -->
+            <div class="device_but">
+                <button class="buttons" onclick="rooms_contr(this)">Применить</button>
+                <button class="buttons" onclick="rooms_contr(this)" id="addR">Добавить</button>
+            </div>   
+         <!-- </div> -->
+         <!--  <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">
+                <span data-feather="home" class="align-text-bottom"></span>
+                Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file" class="align-text-bottom"></span>
+                Orders
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                Products
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="users" class="align-text-bottom"></span>
+                Customers
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="bar-chart-2" class="align-text-bottom"></span>
+                Reports
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="layers" class="align-text-bottom"></span>
+                Integrations
+              </a>
+            </li>
+          </ul>
+  
+          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+            <span>Saved reports</span>
+            <a class="link-secondary" href="#" aria-label="Add a new report">
+              <span data-feather="plus-circle" class="align-text-bottom"></span>
+            </a>
+          </h6>
+          <ul class="nav flex-column mb-2">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text" class="align-text-bottom"></span>
+                Current month
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text" class="align-text-bottom"></span>
+                Last quarter
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text" class="align-text-bottom"></span>
+                Social engagement
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text" class="align-text-bottom"></span>
+                Year-end sale
+              </a>
+            </li>
+          </ul> -->
+        </div>
+      </nav>
 
-  <div class="container">
-
+          
+      <div id="main_div" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        ddd
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.
+        <!--   Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore. -->
+      </div>
+    </div>
    
-
-
-    <div>
-      <div class="bg-light p-5 rounded">
+      <!-- <div class="bg-light p-5 rounded">
+       
+     
         <div class="col-sm-8 mx-auto">
-          <h1>Отель</h1>
+          
           <p><div id="main_div"></div>
           </p>
         </div>
-      </div>
-    </div>
+      </div> -->
+    
 
   </div>
 </main>

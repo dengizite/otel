@@ -3,21 +3,23 @@ reg_butt=`<div id="reg_b" class="device_but">
 		<button id="button_reg" class="btn btn-primary buttons" onclick="login(this)">Регистрация</button>
 		<button id="button_autoriz" class="btn btn-primary buttons" onclick="login(this)">Вход</button>
 	</div>`,
-window_reg=`<div id="log_form">
-	<input type="text" maxlength="25" id="new_name" placeholder="Введите имя"/>
-	<input type="text" maxlength="25" id="new_fam" placeholder="Введите фамилию"/>
-	<input type="text" maxlength="25" id="new_pass" placeholder="Придумайте пароль"/>
-	<input type="text" maxlength="10" id="new_ident" placeholder="Введите номер паспорта"/>
-	<input type="text" maxlength="25" id="new_tel" placeholder="Введите телефон"/>	
-	<button class="buttons" id="but_reg" onclick="send_log(this)">Регистрация</button>
-    <button class="buttons" onclick="send_log(this)">Закрыть</button>
+window_reg=`<div id="log_form" class="mb-3">
+	<input class="mb-3 form-control" type="text" maxlength="25" id="new_name" placeholder="Введите имя"/>
+	<input class="mb-3 form-control" type="text" maxlength="25" id="new_fam" placeholder="Введите фамилию"/>
+	<input class="mb-3 form-control" type="text" maxlength="25" id="new_pass" placeholder="Придумайте пароль"/>
+	<input class="mb-3 form-control" type="text" maxlength="10" id="new_ident" placeholder="Введите номер паспорта"/>
+	<input class="mb-3 form-control" type="text" maxlength="25" id="new_tel" placeholder="Введите телефон"/>	
+	<button class="btn btn-primary" id="but_reg" onclick="send_log(this)">Регистрация</button>
+    <button class="btn btn-primary" onclick="send_log(this)">Закрыть</button>
 	</div>`,
-window_log=`<div id="log_form" class="head_but">
-	<input type="text" maxlength="25" id="new_fam" placeholder="Введите фамилию"/>
-	<input type="text" maxlength="25" id="new_pass" placeholder="Введите пароль"/>
-	<button class="buttons" onclick="send_log(this)">Вход</button>
-    <button class="buttons" onclick="send_log(this)">Закрыть</button>
-	</div>`,
+window_log=`
+    <div id="log_form" class="mb-3">
+        <input type="text" class="mb-3 form-control" maxlength="25" id="new_fam" placeholder="Введите фамилию"/>
+        <input type="text" class="mb-3 form-control" maxlength="25" id="new_pass" placeholder="Введите пароль"/>   
+        <button class="btn btn-primary" onclick="send_log(this)">Вход</button>
+        <button class="btn btn-primary" onclick="send_log(this)">Закрыть</button>
+    </div>
+	`,
 
 booking_c=`
 <div class="device_but" id="booking_control">
@@ -38,23 +40,23 @@ rooms_c=`
                 <option selected value="Мест">Мест</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
-                <option value="4">4</option>            
+                <option value="4">4</option>
             </select>
             <select class="room_c" id="room_cat">
                 <option selected value="Категория">Категория</option>
                 <option value="Люкс">Люкс</option>
                 <option value="Стандарт">Стандарт</option>
-                <option value="Эконом">Эконом</option>            
+                <option value="Эконом">Эконом</option>
             </select>
             <select class="room_c" id="room_avail">
-                <option selected value="Свободен">Свободен</option>               
-                <option value="Занят">Занят</option>              
+                <option selected value="Свободен">Свободен</option>
+                <option value="Занят">Занят</option>
             </select>
             <select class="room_c" id="room_sort">
                 <option selected value="Сортировка">Сортировка</option>
                 <option value="дешевле">Сначала дешевле</option>
-                <option value="дороже">Сначала дороже</option>                     
-            </select>            
+                <option value="дороже">Сначала дороже</option>
+            </select>
 			<label class="m_child room_c">c <input class="m_child room_c" id="start_d" type="date"></label>
 			<label class="m_child room_c">до <input class="m_child room_c" id="end_d" type="date"></label>
         </div>

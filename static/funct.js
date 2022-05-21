@@ -1,8 +1,7 @@
 function login(el){
-	if(!document.getElementById('log_form')){reg_b.style.display='none'
-		if(el.textContent==='Регистрация'){main_div.insertAdjacentHTML('beforeend',window_reg)}
-		else if(el.textContent==='Вход'){main_div.insertAdjacentHTML('beforeend',window_log)}
-	}
+	if(document.getElementById('log_form')) log_form.remove()
+    if(el.textContent==='Регистрация') main_div.insertAdjacentHTML('afterbegin',window_reg)
+    else if(el.textContent==='Вход') main_div.insertAdjacentHTML('afterbegin',window_log)	
 }
 
 function send_log(el){	
