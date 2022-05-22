@@ -5,20 +5,26 @@ socket.on('check_in', function(data){
 	if(data[0]==='set_cookie'){
 		document.cookie = 'user='+data[1]+'; max-age='+31536000; document.cookie = 'pswd='+data[2]+'; max-age='+31536000
 		let a=document.getElementById('reg_b'),b=document.getElementById('log_form');
-		if(a){a.remove()};if(b){b.remove()};main_div.insertAdjacentHTML('beforeend',data[3])
+		if(a){a.remove()};if(b){b.remove()};//main_div.insertAdjacentHTML('beforeend',data[3])
 		getHistory.style.display="block";logOut.style.display="block"
 		logIn.style.display="none";registerButt.style.display="none"
-
+		if(data[3]=='admin') {
+			userName.style.display="none";admName.style.display="block"
+			admName.textContent="Администратор"
+		}
+		else  if(data[3]=='klient'){
+			admName.style.display="none";userName.style.display="block"
+			userName.textContent=data[1]
+		}
 	}
 	else if(data[0]==='must_reg'){b=document.getElementById('log_form');if(b){b.remove()}
 		main_div.insertAdjacentHTML('beforeend',window_reg)
 	}
-	else if(data[0]==='success_check'){main_div.insertAdjacentHTML('beforeend',data[1])}
-
+	//else if(data[0]==='success_check'){main_div.insertAdjacentHTML('beforeend',data[1])}
 })
 
 socket.on('get_data',(data)=>{console.log(data)
-	let a=document.getElementById('show_room');if(a){a.remove()}
+	if(data[0]!="book_dates") {let a=document.getElementById('show_room');if(a){a.remove()}}
 	main_div.insertAdjacentHTML('beforeend',show_r)
 	if(data[0]==='book_data'){
 		data[1].forEach(i=>{console.log(i.bookss.v)
@@ -46,24 +52,8 @@ socket.on('get_data',(data)=>{console.log(data)
 			delete data[1][i].books 
 			let id_num,p
 			data[1][i]._id?id_num=data[1][i]._id:id_num=data[1][i].num
-			if(document.getElementById('cl_control')){
-				/* p=`<div class="rooms">
-				<p class ="room" id="${id_num}">${JSON.stringify(data[1][i])}</p>
-				<button class="buttons" onclick="edit_r(this)">Бронировать</button>
-				</div>
-				` */
-				p=`<div class="look_rooms">
-					<div id="${id_num}">
-						<p class ="room">Номер комнаты: ${id_num}</p>
-						<p class ="room">Количество мест: ${data[1][i].bad}</p>
-						<p class ="room">Категория: ${data[1][i].cat}</p>
-						<p class ="room">Цена за сутки: ${data[1][i].price}</p>
-						<p class ="room">Описание: ${data[1][i].descr}</p>
-					</div>
-					<button class="buttons" onclick="edit_r(this)">Бронировать</button>
-				</div>`
-			}
-			else{
+			
+			if(document.getElementById('admName').style.display!="none"){
 				p=`<div class="look_rooms">
 				<div id="${id_num}">
 					<p class ="room">Номер комнаты: ${id_num}</p>
@@ -77,11 +67,35 @@ socket.on('get_data',(data)=>{console.log(data)
 				<button class="buttons" onclick="edit_r(this)">Удалить</button>
 				</div>`
 			}
+			else {
+				/* p=`<div class="rooms">
+				<p class ="room" id="${id_num}">${JSON.stringify(data[1][i])}</p>
+				<button class="buttons" onclick="edit_r(this)">Бронировать</button>
+				</div>
+				` */
+				p=`<div class="look_rooms">
+					<div class=""  id="${id_num}">
+					  <div class="">
+						<p class ="room">Номер комнаты: ${id_num}</p>
+						<p class ="room">Количество мест: ${data[1][i].bad}</p>
+						<p class ="room">Категория: ${data[1][i].cat}</p>
+						<p class ="room">Цена за сутки: ${data[1][i].price}</p>
+					  </div>
+					  <div class="">
+						<p class ="room">Описание: ${data[1][i].descr}</p>
+						</div>
+					</div>
+					<p>
+					<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" 
+					onclick="edit_r(this)">Бронировать</button>
+					</p>
+				</div>`
+			}
 			show_room.insertAdjacentHTML('beforeend',p)
 			if(data[1][i].images&&data[1][i].images.length!=0){
 				let el=document.getElementById(id_num)
 				data[1][i].images.forEach(i=>{
-					el.insertAdjacentHTML('beforeend',`<img class="img_prev" title=${i[1]} src=${i[0]} onclick="full_image(this)">`)
+					el.insertAdjacentHTML('afterend',`<img class="img_prev" title=${i[1]} src=${i[0]} onclick="full_image(this)">`)
 				})
 			}
 			
@@ -146,7 +160,7 @@ socket.on('send_data',(data)=>{
 })
 
 socket.on('booking',(data)=>{console.log(data)
-	main_div.insertAdjacentHTML('beforeend',data[6])
+	modalBody.insertAdjacentHTML('beforeend',data[6])
 	if(data[1]==='room'){
 		book_r.textContent='Забронировать номер '+data[2]+' на даты:'
 		let s='',s_u=document.getElementById('select_user')

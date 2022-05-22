@@ -69,7 +69,7 @@ async function find_free_room(a,b,c){return dbRooms.aggregate(
 const app=express(),http=http_base.createServer(app),io=io_base(http),__dirname = path.resolve(),PORT=process.env.PORT||8080,clients={}
 app.use(express.static(".")); 
 app.get('/', (req, res) => {res.sendFile (__dirname + '/static/index.html' )})
-app.get('/about', (req, res) => {res.sendFile (__dirname + '/static/about.html' )})
+/* app.get('/about', (req, res) => {res.sendFile (__dirname + '/static/about.html' )}) */
 io.on('connection', (socket) => {
 	io.to(socket.id).emit('chat',['подключился',socket.id]); console.log ('yes conns', socket.id);	
 	
@@ -86,8 +86,13 @@ io.on('connection', (socket) => {
 			find(q,dbUsers,{},{_id:0}).then((resp)=>{
 				if(resp.length!==0){console.log(resp)
 					if(resp[0].role==='admin'){
-						io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],control_menu])}
-					else{io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],user_menu])}
+						//io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],control_menu])
+						io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],resp[0].role])
+					}
+					else{
+						//io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],user_menu])
+						io.to(socket.id).emit('check_in',['set_cookie',data[1],data[2],resp[0].role])
+					}
 				}
 				else{io.to(socket.id).emit('check_in',['must_reg'])}
 			}).catch(err=>{catch_err(err)})
@@ -327,23 +332,23 @@ const control_menu=`<div id="adm_control" class="device_but">
 wind_books=`<div id="wind_b">
 	<p id='book_r'></p>
 	<div id="dates">
-		<label class="m_child">c <input class="m_child" id="start_data" type="date" onblur="count()"></label>
-		<label class="m_child">до <input class="m_child" id="end_data" type="date" onblur="count()"></label>
+		<label class="form-label">c <input class="form-control" id="start_data" type="date" onblur="count()"></label>
+		<label class="form-label">до <input class="form-control" id="end_data" type="date" onblur="count()"></label>
 	</div>
 	<div>
-		<label for="sel_user">Выберите на кого бронировать:</label>
-		<input list="list_user" id="select_user" name="sel_user"/>
+		<label class="form-label" for="sel_user">Выберите на кого бронировать:</label>
+		<input class="form-control" list="list_user" id="select_user" name="sel_user"/>
 		<datalist id="list_user"></datalist>
 	</div>
 	<div>
-		<label for="price_n">Цена за сутки:</label>
-		<input type="text" name="price_n" maxlength="10" id="price_num" onblur="count()"/>
-		<span>Итог: </span><span id="sum"></span>
+		<label class="form-label" for="price_n">Цена за сутки:</label>
+		<input class="form-control" type="text" name="price_n" maxlength="10" id="price_num" onblur="count()"/>
+		<span class="form-label">Итог: </span><span class="form-label" id="sum"></span>
 	</div>	
 	<div>
-	<table id="calendar3"  onchange="Kalendar3()">
+	<table class="table" id="calendar3"  onchange="Kalendar3()">
     <thead>
-    <tr><td colspan="4"><select>
+    <tr><td colspan="4"><select class="form-select">
         <option value="0">Январь</option>
         <option value="1">Февраль</option>
         <option value="2">Март</option>
@@ -356,7 +361,7 @@ wind_books=`<div id="wind_b">
         <option value="9">Октябрь</option>
         <option value="10">Ноябрь</option>
         <option value="11">Декабрь</option>
-        </select><td colspan="3"><input type="number" value="" min="0" max="9999" size="4">
+        </select class="form-select"><td colspan="3"><input class="form-control" type="number" value="" min="0" max="9999" size="4">
         <tr><td>Пн<td>Вт<td>Ср<td>Чт<td>Пт<td>Сб<td>Вс
         <tbody>
 </table>
@@ -369,20 +374,18 @@ wind_books=`<div id="wind_b">
 wind_books_user=`<div id="wind_b">
 	<p id='book_r'></p>
 	<div id="dates">
-		<label class="m_child">c <input class="m_child" id="start_data" type="date" onblur="count()"></label>
-		<label class="m_child">до <input class="m_child" id="end_data" type="date" onblur="count()"></label>
+		<label class="form-label">c <input class="form-control" id="start_data" type="date" onblur="count()"></label>
+		<label class="form-label">до <input class="form-control" id="end_data" type="date" onblur="count()"></label>
 	</div>
 	<div>
+		<label class="form-label" for="price_n">Цена за сутки:</label>
+		<input type="text" class="form-control" name="price_n" maxlength="10" id="price_num" onblur="count()"/>
 	</div>
+	<div><span class="form-label">Итог: </span><span class="form-label" id="sum"></span></div>
 	<div>
-		<label for="price_n">Цена за сутки:</label>
-		<input type="text" name="price_n" maxlength="10" id="price_num" onblur="count()"/>
-		<span>Итог: </span><span id="sum"></span>
-	</div>	
-	<div>
-	<table id="calendar3"  onchange="Kalendar3()">
+	<table class="table" id="calendar3"  onchange="Kalendar3()">
     <thead>
-    <tr><td colspan="4"><select>
+    <tr><td colspan="4"><select class="form-select">
         <option value="0">Январь</option>
         <option value="1">Февраль</option>
         <option value="2">Март</option>
@@ -395,15 +398,12 @@ wind_books_user=`<div id="wind_b">
         <option value="9">Октябрь</option>
         <option value="10">Ноябрь</option>
         <option value="11">Декабрь</option>
-        </select><td colspan="3"><input type="number" value="" min="0" max="9999" size="4">
+        </select class="form-select"><td colspan="3"><input class="form-control" type="number" value="" min="0" max="9999" size="4">
         <tr><td>Пн<td>Вт<td>Ср<td>Чт<td>Пт<td>Сб<td>Вс
         <tbody>
 </table>
 	</div>
-	<div>
-		<button class="buttons" onclick="send_book()">Подтвердить</button>
-		<button class="buttons" onclick="closes(this)">Закрыть</button>
-	</div>
+	
 </div>`,
 inf_books=`<div id="inf_b">	
 	<div>
@@ -413,3 +413,8 @@ inf_books=`<div id="inf_b">
 busy_book=`<p id="busy_b">Выберите другие даты, на эти даты номер занят</p>`
 ,
 success_book=`<p id="success_b">Забронировано</p>`
+
+/* <div>
+		<button class="buttons" onclick="send_book()">Подтвердить</button>
+		<button class="buttons" onclick="closes(this)">Закрыть</button>
+	</div> */
