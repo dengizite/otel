@@ -122,7 +122,8 @@
     <div class=" row">
       <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
         <div class="position-sticky pt-md-3">
-          <div class="accordion" id="accordionPanelsStayOpenExample">
+
+          <div class="accordion" id="accordionUser"><!-- id="accordionPanelsStayOpenExample" -->
             <div class="accordion-item">
               <h2 class="accordion-header" id="panelsStayOpen-headingOne">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
@@ -180,85 +181,165 @@
               </div>
             </div>
             </div>
-                  
           </div>
 
-          <!--   <div class="device_but">
-                <button class="buttons" onclick="rooms_contr(this)">Применить</button>
-                <button class="buttons" onclick="rooms_contr(this)" id="addR">Добавить</button>
-            </div>   --> 
-         <!-- </div> -->
-         <!--  <ul class="nav flex-column">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">
-                <span data-feather="home" class="align-text-bottom"></span>
-                Dashboard
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="file" class="align-text-bottom"></span>
-                Orders
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="shopping-cart" class="align-text-bottom"></span>
-                Products
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="users" class="align-text-bottom"></span>
-                Customers
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="bar-chart-2" class="align-text-bottom"></span>
-                Reports
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="layers" class="align-text-bottom"></span>
-                Integrations
-              </a>
-            </li>
-          </ul>
-  
-          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
-            <span>Saved reports</span>
-            <a class="link-secondary" href="#" aria-label="Add a new report">
-              <span data-feather="plus-circle" class="align-text-bottom"></span>
-            </a>
-          </h6>
-          <ul class="nav flex-column mb-2">
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="file-text" class="align-text-bottom"></span>
-                Current month
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="file-text" class="align-text-bottom"></span>
-                Last quarter
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="file-text" class="align-text-bottom"></span>
-                Social engagement
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="file-text" class="align-text-bottom"></span>
-                Year-end sale
-              </a>
-            </li>
-          </ul> -->
+          <div class="accordion" id="admBooks" style="display: none;"><!-- id="accordionPanelsStayOpenExample" -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+                  Бронирования
+                </font></font></button>
+              </h2>
+            <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+              <div class="accordion-body">
+                <ul class="nav flex-column">
+                  <li class="p-2 nav-item">
+                    <input class="form-control" type="text" maxlength="25" id="search_r" placeholder="Номер комнаты"/>
+                  </li>
+                  <li class="p-2 nav-item">
+                    <input class="form-control" type="text" maxlength="25" id="search_kl" placeholder="Фамилия клиента"/>
+                  </li>
+                  <li class="p-2 nav-item">
+                    <label class="m_child mb-0 form-label">С какого числа:</label>
+                  </li>
+                  <li class="px-2 pt-0 nav-item">
+                    <input class="m_child form-control" id="start_d" type="date">
+                  </li>
+                  <li class="p-2 nav-item">
+                    <label class="m_child mb-0 form-label">До какого числа:</label>
+                  </li>
+                  <li class="px-2 pt-0 nav-item">
+                    <input class="m_child form-control" id="end_d" type="date">
+                  </li>
+                  <li class="p-2 nav-item">
+                    <button class="btn" onclick="book_contr()">Найти</button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            </div>
+          </div>
+
+          <div class="accordion" id="admRooms" style="display: none;">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+                  Номера
+                </font></font></button>
+              </h2>
+            <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+              <div class="accordion-body">
+                <ul class="nav flex-column">
+                  <li class="p-2 nav-item">
+                    <select class="form-select" id="room_bed">
+                        <option selected value="Мест">Мест</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="4">4</option>
+                    </select>
+                  </li>
+                  <li class="p-2 nav-item">
+                    <select class="form-select" id="room_cat">
+                        <option selected value="Категория">Категория</option>
+                        <option value="Люкс">Люкс</option>
+                        <option value="Стандарт">Стандарт</option>
+                        <option value="Эконом">Эконом</option>
+                    </select>
+                  </li>
+                  <li class="p-2 nav-item">
+                    <select class="form-select" id="room_avail">
+                        <option selected value="Свободен">Свободен</option>
+                        <option value="Занят">Занят</option>
+                    </select>
+                  </li>
+                  <li class="p-2 nav-item">
+                    <select class="form-select" id="room_sort">
+                        <option selected value="Сортировка">Сортировка</option>
+                        <option value="дешевле">Сначала дешевле</option>
+                        <option value="дороже">Сначала дороже</option>
+                    </select>
+                  </li>
+                  <li class="p-2 nav-item">
+                    <label class="m_child mb-0 form-label">С какого числа:</label>
+                  </li>
+                  <li class="px-2 pt-0 nav-item">
+                    <input class="m_child form-control" id="start_d" type="date">
+                  </li>
+                  <li class="p-2 nav-item">
+                    <label class="m_child mb-0 form-label">До какого числа:</label>
+                  </li>
+                  <li class="px-2 pt-0 nav-item">
+                    <input class="m_child form-control" id="end_d" type="date">
+                  </li>
+                  <li class="p-2 nav-item">
+                    <button class="btn" onclick="rooms_contr(this)">Применить</button>
+                  </li>
+                  <li class="p-2 nav-item">
+                    <button class="btn" onclick="rooms_contr(this)" id="addR"">Добавить</button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            </div>
+          </div>
+
+          <div class="accordion" id="admUsers" style="display: none;">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="panelsStayOpen-headingFour">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+                  Клиенты
+                </font></font></button>
+              </h2>
+            <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
+              <div class="accordion-body">
+                <ul class="nav flex-column">
+                  <li class="p-2 nav-item">
+                    <input class="form-control" type="text" maxlength="25" id="search_kl" placeholder="Фамилия или телефон"/>
+                  </li>
+                  <li class="p-2 nav-item">
+                    <button class="btn" onclick="kl_contr(this)">Найти</button>
+                  </li>
+                  <li class="p-2 nav-item">
+                    <button class="btn" onclick="kl_contr(this)">Добавить</button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            </div>
+          </div>
+
+          <div class="accordion" id="admReports" style="display: none;">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="panelsStayOpen-headingFive">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+                  Отчеты
+                </font></font></button>
+              </h2>
+            <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
+              <div class="accordion-body">
+                <ul class="nav flex-column">
+                  <li class="p-2 nav-item">
+                    <label class="m_child mb-0 form-label">С какого числа:</label>
+                  </li>
+                  <li class="px-2 pt-0 nav-item">
+                    <input class="m_child form-control" id="start_d" type="date">
+                  </li>
+                  <li class="p-2 nav-item">
+                    <label class="m_child mb-0 form-label">До какого числа:</label>
+                  </li>
+                  <li class="px-2 pt-0 nav-item">
+                    <input class="m_child form-control" id="end_d" type="date">
+                  </li>
+                  <li class="p-2 nav-item">
+                    <button class="btn" onclick="reports(this)">Клиенты в номерах по выбранным датам</button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            </div>
+          </div>
+
+
         </div>
       </nav>
 
@@ -266,21 +347,10 @@
       <div id="main_div" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         ddd
           Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.
-        <!--   Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore. -->
+        
       </div>
     </div>
    
-      <!-- <div class="bg-light p-5 rounded">
-       
-     
-        <div class="col-sm-8 mx-auto">
-          
-          <p><div id="main_div"></div>
-          </p>
-        </div>
-      </div> -->
-    
-
   </div>
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">

@@ -278,6 +278,7 @@ io.on('connection', (socket) => {
 		else if(data[0]==='Бронировать'){io.to(socket.id).emit('booking',[...data,wind_books_user])}
 		else if(data[0]==='Подтвердить'){
 			let s=`books.${data[2].split('_')[1]}.stat`,q={'num':data[2].split('_')[0],[s]:'Ожидает'}
+			console.log(q,s)
 			upd(q,dbRooms,{$set:{[s]:'Подтверждено'}})
 			.then((resp)=>{console.log(resp)})
 			.catch(err=>{catch_err(err,socket.id)})

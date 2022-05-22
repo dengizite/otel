@@ -128,16 +128,15 @@ function send_book(){
     }   
 }
 
-function edit_r(el){console.log(typeof el.parentElement.parentElement.querySelector('div') );
+function edit_r(el){
 
     let w=false; const e=['wind_b','log_form','edit_book','add_room','inf_b']
     e.forEach(i=>{if(document.getElementById(i)){w=true}})
     console.log(w)
     if(!w){
         let e=el.parentElement.parentElement.querySelector('div').querySelector('div') ,d={},els_p
-        console.log(e)
         if(el.textContent==='Забронировать'||el.textContent==='Изменить'||el.textContent==='Удалить'||el.textContent==='Бронирования'||el.textContent==='Бронировать'){
-            els_p=Array.from(e.children);console.log(els_p)
+            els_p=Array.from(e.children);
             if(e.querySelector('p').className==='room'){
                 d._id=els_p[0].textContent.split(' ').pop();d.bad=els_p[1].textContent.split(' ').pop();
                 d.cat=els_p[2].textContent.split(' ').pop();d.price=els_p[3].textContent.split(' ').pop();
@@ -145,8 +144,9 @@ function edit_r(el){console.log(typeof el.parentElement.parentElement.querySelec
             }
             else if(e.querySelector('p').className==='user'){d._id=els_p[3].textContent.split(' ').pop()}
         }
-        else if(el.textContent==='Подтвердить'||el.textContent==='Отменить'){d._id=e.id}
-        console.log(d)
+        else if(el.textContent==='Подтвердить'||el.textContent==='Отменить'){
+            d._id=el.parentElement.querySelector('div').id
+        }
         socket.emit('edit_data',[el.textContent,e.querySelector('p').className ,d._id,d.price,Date.parse(d.start)+10800000,Date.parse(d.end)+10800000])
         if(el.textContent==='Удалить'){e.parentElement.remove()}
         else if(el.textContent==='Изменить'){
@@ -176,12 +176,12 @@ function edit_r(el){console.log(typeof el.parentElement.parentElement.querySelec
         }
         else if(el.textContent==='Подтвердить'){
             let stat=el.parentElement.querySelector('div').lastElementChild
-            stat.textContent=stat.textContent.replace('Ожидает','Подтверждено')          
+            stat.textContent=stat.textContent.replace('Ожидает','Подтверждено')
             
         }
-        else if(el.textContent==='Отменить'){            
+        else if(el.textContent==='Отменить'){
             let stat=el.parentElement.querySelector('div').lastElementChild
-            stat.textContent=stat.textContent.replace('Ожидает','Подтверждено')
+            stat.textContent=stat.textContent.replace('Ожидает','Отменено')
         }
     }
 }
@@ -191,7 +191,12 @@ function book_contr(){
 }
 
 function kl_contr(el){
-    if(el.textContent==='Найти'){socket.emit('get_data',['kl_data',search_kl.value])}
+    if(el.textContent==='Найти'){
+        const cl=document.getElementById('search_kl')
+        for(let k in cl){console.log(k, cl[k])}
+       
+        socket.emit('get_data',['kl_data',search_kl.value])
+    }
     else if(el.textContent==='Добавить'){
         main_div.insertAdjacentHTML('beforeend',window_reg);but_reg.textContent='Добавить'
     }

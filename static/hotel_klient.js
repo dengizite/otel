@@ -8,12 +8,17 @@ socket.on('check_in', function(data){
 		if(a){a.remove()};if(b){b.remove()};//main_div.insertAdjacentHTML('beforeend',data[3])
 		getHistory.style.display="block";logOut.style.display="block"
 		logIn.style.display="none";registerButt.style.display="none"
-		if(data[3]=='admin') {
+		if(data[3]=='admin') {			
 			userName.style.display="none";admName.style.display="block"
+			getHistory.style.display="none";accordionUser.style.display="none"
+			admBooks.style.display="block";admRooms.style.display="block";admUsers.style.display="block";admReports.style.display="block"
 			admName.textContent="Администратор"
 		}
 		else  if(data[3]=='klient'){
 			admName.style.display="none";userName.style.display="block"
+			getHistory.style.display="block"
+			accordionUser.style.display="block"
+			admBooks.style.display="none";admRooms.style.display="none";admUsers.style.display="none";admReports.style.display="none"
 			userName.textContent=data[1]
 		}
 	}
@@ -24,8 +29,11 @@ socket.on('check_in', function(data){
 })
 
 socket.on('get_data',(data)=>{console.log(data)
-	if(data[0]!="book_dates") {let a=document.getElementById('show_room');if(a){a.remove()}}
-	main_div.insertAdjacentHTML('beforeend',show_r)
+	if(data[0]!="book_dates") {
+		let a=document.getElementById('show_room');if(a){a.remove()}
+		main_div.insertAdjacentHTML('beforeend',show_r)
+	}
+	
 	if(data[0]==='book_data'){
 		data[1].forEach(i=>{console.log(i.bookss.v)
 			i.bookss.v.start=new Date(i.bookss.v.start).toDateString()
@@ -41,8 +49,8 @@ socket.on('get_data',(data)=>{console.log(data)
 						<p class ="room">Сумма: ${i.bookss.v.sum}</p>
 						<p class ="room">Статус: ${i.bookss.v.stat}</p>
 					</div>
-					<button class="buttons" onclick="edit_r(this)">Подтвердить</button>
-					<button class="buttons" onclick="edit_r(this)">Отменить</button>
+					<button class="btn" onclick="edit_r(this)">Подтвердить</button>
+					<button class="btn" onclick="edit_r(this)">Отменить</button>
 				</div>`
 			show_room.insertAdjacentHTML('beforeend',p)
 		})
@@ -74,15 +82,15 @@ socket.on('get_data',(data)=>{console.log(data)
 				</div>
 				` */
 				p=`<div class="look_rooms">
-					<div class=""  id="${id_num}">
-					  <div class="">
-						<p class ="room">Номер комнаты: ${id_num}</p>
-						<p class ="room">Количество мест: ${data[1][i].bad}</p>
-						<p class ="room">Категория: ${data[1][i].cat}</p>
-						<p class ="room">Цена за сутки: ${data[1][i].price}</p>
-					  </div>
-					  <div class="">
-						<p class ="room">Описание: ${data[1][i].descr}</p>
+					<div id="${id_num}">
+						<div>
+							<p class ="room">Номер комнаты: ${id_num}</p>
+							<p class ="room">Количество мест: ${data[1][i].bad}</p>
+							<p class ="room">Категория: ${data[1][i].cat}</p>
+							<p class ="room">Цена за сутки: ${data[1][i].price}</p>
+						</div>
+						<div>
+							<p class ="room">Описание: ${data[1][i].descr}</p>
 						</div>
 					</div>
 					<p>
@@ -142,8 +150,8 @@ socket.on('get_data',(data)=>{console.log(data)
 						<p class ="room">Сумма: ${i.bookss.v.sum}</p>
 						<p class ="room">Статус: ${i.bookss.v.stat}</p>
 					</div>
-					<button class="buttons" onclick="edit_r(this)">Подтвердить</button>
-					<button class="buttons" onclick="edit_r(this)">Отменить</button>
+					<button class="btn" onclick="edit_r(this)">Подтвердить</button>
+					<button class="btn" onclick="edit_r(this)">Отменить</button>
 				</div>`
 			show_room.insertAdjacentHTML('beforeend',p)
 		})
