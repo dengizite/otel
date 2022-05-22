@@ -128,18 +128,20 @@ function send_book(){
     }   
 }
 
-function edit_r(el){console.log(el.parentElement.querySelector('div'));
+function edit_r(el){console.log(typeof el.parentElement.parentElement.querySelector('div') );
+
     let w=false; const e=['wind_b','log_form','edit_book','add_room','inf_b']
     e.forEach(i=>{if(document.getElementById(i)){w=true}})
     console.log(w)
     if(!w){
-        let e=el.parentElement.querySelector('div'),d={},els_p
+        let e=el.parentElement.parentElement.querySelector('div').querySelector('div') ,d={},els_p
+        console.log(e)
         if(el.textContent==='Забронировать'||el.textContent==='Изменить'||el.textContent==='Удалить'||el.textContent==='Бронирования'||el.textContent==='Бронировать'){
             els_p=Array.from(e.children);console.log(els_p)
             if(e.querySelector('p').className==='room'){
                 d._id=els_p[0].textContent.split(' ').pop();d.bad=els_p[1].textContent.split(' ').pop();
                 d.cat=els_p[2].textContent.split(' ').pop();d.price=els_p[3].textContent.split(' ').pop();
-                d.descr=els_p[4].textContent.split(' ').pop()
+                /* d.descr=els_p[4].textContent.split(' ').pop() */
             }
             else if(e.querySelector('p').className==='user'){d._id=els_p[3].textContent.split(' ').pop()}
         }
