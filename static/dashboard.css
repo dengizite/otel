@@ -19,11 +19,16 @@ body {
   z-index: 100; /* Behind the navbar */
   padding: 48px 0 0; /* Height of navbar */
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+  min-width: 187px;
 }
 
 @media (max-width: 767.98px) {
   .sidebar {
     position: relative;
+    padding: 0
+  }
+  #black-nav{
+    margin-bottom: 0;
   }
 }
 
@@ -70,10 +75,6 @@ body {
 .sidebar-heading {
   font-size: .75rem;
 }
-
-/*
- * Navbar
- */
 
 .navbar-brand {
   padding-top: .75rem;

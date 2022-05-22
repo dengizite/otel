@@ -79,7 +79,7 @@ io.on('connection', (socket) => {
 		if(data[0]==='add_client'){			
 			insrt_user({'name':data[1],'fam':data[2],'pass':data[3],'ident':data[4],'tel':data[5],'role':'klient'},dbUsers)
 			.then((resp)=>{io.to(socket.id).emit('check_in',['set_cookie',data[2],data[3],user_menu])})
-			.catch(err=>{catch_err(err,socket.id)})			
+			.catch(err=>{catch_err(err,socket.id)})
 		}
 		else{
 			let q={'fam':data[1],'pass':data[2]}

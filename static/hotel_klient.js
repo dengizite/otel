@@ -6,6 +6,8 @@ socket.on('check_in', function(data){
 		document.cookie = 'user='+data[1]+'; max-age='+31536000; document.cookie = 'pswd='+data[2]+'; max-age='+31536000
 		let a=document.getElementById('reg_b'),b=document.getElementById('log_form');
 		if(a){a.remove()};if(b){b.remove()};main_div.insertAdjacentHTML('beforeend',data[3])
+		getHistory.style.display="block";logOut.style.display="block"
+		logIn.style.display="none";registerButt.style.display="none"
 
 	}
 	else if(data[0]==='must_reg'){b=document.getElementById('log_form');if(b){b.remove()}
@@ -204,7 +206,7 @@ socket.on('chat',(data)=>{console.log(data)})
 
 document.addEventListener('DOMContentLoaded',(e)=>{
 	let ind1 = document.cookie.match(/user=/),
-	logButton=document.getElementById('logInOut'),regButton=document.getElementById('registerButt')
+	logButton=document.getElementById('logIn'),regButton=document.getElementById('registerButt')
 	console.log(logButton)
 	if (document.cookie&&ind1!==null){console.log(333)
 		/* let n_c=data_from_cookie('user=')		
