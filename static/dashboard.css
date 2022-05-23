@@ -42,15 +42,23 @@ body {
 }
 
 .img_prev{height: 200px;margin: 10px;}
+.images{position: relative;}
+.images>img{height: 100px;width: 112px;}
+.full_image, .images>button, .full_image>button{position: absolute;}
+.full_image{z-index: 5;}
+.full_image>button{width: 1rem; opacity: 80%;}
+.parent_load_img{display: flex;gap: 10px;flex-wrap: wrap;align-self: start;justify-content: space-around;}
+#load_img{width:7rem;}
 
-#wind_b{
+#wind_b,#add_room{
   display: flex;
     flex-direction: column;
     row-gap: 15px;
     align-items: center;
 }
+#add_room>div{display: flex;column-gap: 10px;}
 
-#price_num{
+#price_num,#add_number,#add_price{
 max-width: 100px;
 }
 

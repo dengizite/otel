@@ -367,10 +367,7 @@ wind_books=`<div id="wind_b">
         <tbody>
 </table>
 	</div>
-	<div>
-		<button class="buttons" onclick="send_book()">Подтвердить</button>
-		<button class="buttons" onclick="closes(this)">Закрыть</button>
-	</div>
+	
 </div>`,
 wind_books_user=`<div id="wind_b">
 	<p id='book_r'></p>

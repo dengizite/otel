@@ -134,13 +134,15 @@ function edit_r(el){
     e.forEach(i=>{if(document.getElementById(i)){w=true}})
     console.log(w)
     if(!w){
-        let e=el.parentElement.parentElement.querySelector('div').querySelector('div') ,d={},els_p
+        let e=el.parentElement.parentElement.querySelector('div').querySelector('div') ,d={},els_p,images
         if(el.textContent==='Забронировать'||el.textContent==='Изменить'||el.textContent==='Удалить'||el.textContent==='Бронирования'||el.textContent==='Бронировать'){
             els_p=Array.from(e.children);
+            console.log(e.parentElement.lastElementChild,e.parentElement.lastElementChild.textContent.split(' '))
+            images=el.parentElement.parentElement.querySelectorAll('img')
             if(e.querySelector('p').className==='room'){
                 d._id=els_p[0].textContent.split(' ').pop();d.bad=els_p[1].textContent.split(' ').pop();
                 d.cat=els_p[2].textContent.split(' ').pop();d.price=els_p[3].textContent.split(' ').pop();
-                /* d.descr=els_p[4].textContent.split(' ').pop() */
+                d.descr=e.parentElement.lastElementChild.textContent
             }
             else if(e.querySelector('p').className==='user'){d._id=els_p[3].textContent.split(' ').pop()}
         }
@@ -159,15 +161,17 @@ function edit_r(el){
                 new_ident.disabled=true
             }
             else if(e.querySelector('p').className==='room'){
-                main_div.insertAdjacentHTML('beforeend',add_r);but_reg.textContent='Изменить'
+               // main_div.insertAdjacentHTML('beforeend',add_r);
+                modalBody.insertAdjacentHTML('beforeend',add_r)
+                //but_reg.textContent='Изменить'
                 add_number.value=d._id;add_price.value=d.price;add_room_bed.value=d.bad;
                 add_room_cat.value=d.cat;add_descr_room.textContent=d.descr;
                 add_number.disabled=true
-                if(els_p.length>5){
-                    for(let i=5;i<els_p.length;i++) {
-                        let imgtag=`<div class='images' id=${els_p[i].title}>
-                                    <button  type='button' onclick="remove_image(this)">&times</button>
-                                    <img title=${els_p[i].title} src=${els_p[i].src} onclick="full_image(this)">
+                if(images){
+                    for(let i of images) {
+                        let imgtag=`<div class='images' id=${i.title}>
+                                    <button class="btn btn-danger btn-sm" type='button' onclick="remove_image(this)">&times</button>
+                                    <img title=${i.title} src=${i.src} onclick="full_image(this)">
                                 <div>`
                       load_img.insertAdjacentHTML('afterend',imgtag)
                     }
@@ -187,7 +191,7 @@ function edit_r(el){
 }
 
 function book_contr(){
-    socket.emit('get_data',['book_data',search_r.value,search_kl.value,start_d.valueAsNumber,end_d.valueAsNumber])
+    socket.emit('get_data',['book_data',ABsearch_r.value,ABsearch_kl.value,ABstart_d.valueAsNumber,ABend_d.valueAsNumber])
 }
 
 function kl_contr(el){
@@ -204,11 +208,22 @@ function kl_contr(el){
 
 function rooms_contr(el){
     if(el.textContent==='Применить'){
-        if(end_d.valueAsNumber-start_d.valueAsNumber<86400000||start_d.valueAsNumber<Date.now()||end_d.valueAsNumber<Date.now()){alert('Выберите верные даты')}
-        socket.emit('get_data',['rooms_data',room_bed.value,room_cat.value,room_avail.value,room_sort.value,start_d.valueAsNumber,end_d.valueAsNumber])
+        let bed,cat,avail,sort,start,end
+        console.log(admName.style.display)
+        if(admName.style.display=="block"){
+            bed=ARroom_bed.value;cat=ARroom_cat.value;avail=ARroom_avail.value;sort=ARroom_sort.value;
+            start=ARstart_d.valueAsNumber;end=end_d.valueAsNumber;
+        }
+        else{
+            bed=room_bed.value;cat=room_cat.value;avail=room_avail.value;sort=room_sort.value;
+            start=start_d.valueAsNumber;end=end_d.valueAsNumber;
+        }
+        if(end-start<86400000||start<Date.now()||end<Date.now()){alert('Выберите верные даты')}
+        socket.emit('get_data',['rooms_data',bed,cat,avail,sort,start,end])
     }
     else if(el.textContent==='Добавить'){
-        main_div.insertAdjacentHTML('beforeend',add_r)
+       // main_div.insertAdjacentHTML('beforeend',add_r)
+       modalBody.insertAdjacentHTML('beforeend',add_r)
        
     }
 }
@@ -244,12 +259,16 @@ function add_rooms(e){
                 if(s){
                     let parent_s=s.parentElement;s.remove()
                     let p=`<div id="${add_number.value}">
-                            <p class ="room">Номер комнаты: ${add_number.value}</p>
-                            <p class ="room">Количество мест: ${add_room_bed.value}</p>
-                            <p class ="room">Категория: ${add_room_cat.value}</p>
-                            <p class ="room">Цена за сутки: ${add_price.value}</p>
-                            <p class ="room">Описание: ${add_descr_room.value}</p>
-                        </div>`
+                                <div>
+                                    <p class ="room">Номер комнаты: ${add_number.value}</p>
+                                    <p class ="room">Количество мест: ${add_room_bed.value}</p>
+                                    <p class ="room">Категория: ${add_room_cat.value}</p>
+                                    <p class ="room">Цена за сутки: ${add_price.value}</p>
+                                </div>
+                                <div>
+                                    <p class ="room" style="overflow-wrap: anywhere;">${add_descr_room.value}</p>
+                                </div>
+                            </div>`
                         parent_s.insertAdjacentHTML('afterbegin',p)
                      if(m.length!=0){
                         let el=document.getElementById(add_number.value)
@@ -345,7 +364,7 @@ async function loading(event) {
                 const compressedBlob = widthRatioBlob.length > heightRatioBlob.length ? heightRatioBlob : widthRatioBlob;
                 let n=name+'_'+count
                 let imgtag=`<div class='images' id=${n}>
-                                <button type='button' onclick="remove_image(this)">&times</button>
+                                <button type='button' onclick="remove_image(this)" class="btn btn-danger btn-sm">&times</button>
                                 <img title=${n} src=${compressedBlob} onclick="full_image(this)">
                             <div>`
                 load_img.insertAdjacentHTML('afterend',imgtag)
@@ -395,9 +414,8 @@ function imageExists(url, callback) {
 }
 
 function full_image(el){
-    let image= `<div class='full_image'>
-                    <button  type='button' onclick="remove_image(this)">&times</button>
-                    <img src=${el.src}>
-                <div>`
-    main_div.insertAdjacentHTML('beforeend',image)
+    let image= `<img style="position:fixed;width:100%;top:0; z-index: 2500;" 
+    src=${el.src} id="fulll" onclick="document.getElementById('fulll').remove()"
+    >`
+    main.insertAdjacentHTML('beforeend',image)
 }

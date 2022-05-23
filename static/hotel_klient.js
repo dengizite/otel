@@ -11,14 +11,16 @@ socket.on('check_in', function(data){
 		if(data[3]=='admin') {			
 			userName.style.display="none";admName.style.display="block"
 			getHistory.style.display="none";accordionUser.style.display="none"
-			admBooks.style.display="block";admRooms.style.display="block";admUsers.style.display="block";admReports.style.display="block"
+			admBooks.style.display="block";
+			//admRooms.style.display="block";admUsers.style.display="block";admReports.style.display="block"
 			admName.textContent="Администратор"
 		}
 		else  if(data[3]=='klient'){
 			admName.style.display="none";userName.style.display="block"
 			getHistory.style.display="block"
 			accordionUser.style.display="block"
-			admBooks.style.display="none";admRooms.style.display="none";admUsers.style.display="none";admReports.style.display="none"
+			admBooks.style.display="none";
+			//admRooms.style.display="none";admUsers.style.display="none";admReports.style.display="none"
 			userName.textContent=data[1]
 		}
 	}
@@ -63,24 +65,29 @@ socket.on('get_data',(data)=>{console.log(data)
 			
 			if(document.getElementById('admName').style.display!="none"){
 				p=`<div class="look_rooms">
-				<div id="${id_num}">
-					<p class ="room">Номер комнаты: ${id_num}</p>
-					<p class ="room">Количество мест: ${data[1][i].bad}</p>
-					<p class ="room">Категория: ${data[1][i].cat}</p>
-					<p class ="room">Цена за сутки: ${data[1][i].price}</p>
-					<p class ="room">Описание: ${data[1][i].descr}</p>
-				</div>
-				<button class="buttons" onclick="edit_r(this)">Забронировать</button>
-				<button class="buttons" onclick="edit_r(this)">Изменить</button>
-				<button class="buttons" onclick="edit_r(this)">Удалить</button>
+					<div id="${id_num}">
+						<div>
+							<p class ="room">Номер комнаты: ${id_num}</p>
+							<p class ="room">Количество мест: ${data[1][i].bad}</p>
+							<p class ="room">Категория: ${data[1][i].cat}</p>
+							<p class ="room">Цена за сутки: ${data[1][i].price}</p>
+						</div>
+						<div>
+							<p class ="room" style="overflow-wrap: anywhere;">${data[1][i].descr}</p>
+						</div>
+					</div>
+					<p>
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" 
+							onclick="edit_r(this);exampleModalLabel.textContent='Бронирование';buttonyesmodal.textContent='Подтвердить';document.getElementById('buttonyesmodal').onclick=function(){send_book()}"
+							>Забронировать</button>
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" 
+							onclick="edit_r(this);exampleModalLabel.textContent='Изменение комнаты';buttonyesmodal.textContent='Изменить';buttonyesmodal.onclick=function(){add_rooms(this)}"
+							>Изменить</button>
+						<button class="btn btn-primary" onclick="edit_r(this)">Удалить</button>
+					</p>
 				</div>`
 			}
 			else {
-				/* p=`<div class="rooms">
-				<p class ="room" id="${id_num}">${JSON.stringify(data[1][i])}</p>
-				<button class="buttons" onclick="edit_r(this)">Бронировать</button>
-				</div>
-				` */
 				p=`<div class="look_rooms">
 					<div id="${id_num}">
 						<div>
@@ -90,12 +97,12 @@ socket.on('get_data',(data)=>{console.log(data)
 							<p class ="room">Цена за сутки: ${data[1][i].price}</p>
 						</div>
 						<div>
-							<p class ="room">Описание: ${data[1][i].descr}</p>
+							<p class ="room">${data[1][i].descr}</p>
 						</div>
 					</div>
 					<p>
 					<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" 
-					onclick="edit_r(this)">Бронировать</button>
+						onclick="edit_r(this)">Бронировать</button>
 					</p>
 				</div>`
 			}

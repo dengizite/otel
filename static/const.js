@@ -85,25 +85,41 @@ report_c=`
 
 add_r=`
 <div id="add_room">
-    <input type="text" maxlength="25" id="add_number" placeholder="№ комнаты"/>
-    <input type="text" maxlength="25" id="add_price" placeholder="цена"/>
-    <select id="add_room_bed">
-        <option selected disabled>Мест</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="4">4</option>            
-    </select>
-    <select id="add_room_cat">
-        <option selected disabled>Категория</option>
-        <option value="Люкс">Люкс</option>
-        <option value="Стандарт">Стандарт</option>
-        <option value="Эконом">Эконом</option>            
-    </select>
-    <label for="add_descr_room">Описание номера:</label>
-    <textarea id="add_descr_room" name="add_descr_room" rows="5" cols="33"></textarea>    
-    <button id="but_reg" class="buttons" onclick="add_rooms(this)">Добавить</button>
-    <button class="buttons" onclick="add_rooms(this)">Закрыть</button>
-    <div class="parent_load_img"><input type="file" id="load_img" multiple accept=".png, .jpg, .jpeg, .gif" onchange="loading(event)"></div>
+    <div>
+        <label class="form-label" for="add_number">№ комнаты:</label>
+        <input class="form-control" type="text" maxlength="25" id="add_number"/>
+    </div>
+    <div>
+        <label class="form-label" for="add_price">Цена за сутки:</label>
+        <input class="form-control" type="text" maxlength="25" id="add_price"/>
+    </div>
+    <div>
+        <label class="form-label" for="add_room_bed">Количество мест в номере:</label>
+        <select class="form-select" id="add_room_bed">
+            <option selected disabled>Мест</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="4">4</option>
+        </select>
+    </div>
+    <div>
+    <label class="form-label" for="add_room_cat">Категория номера:</label>
+        <select class="form-select" id="add_room_cat">
+            <option selected disabled>Категория</option>
+            <option value="Люкс">Люкс</option>
+            <option value="Стандарт">Стандарт</option>
+            <option value="Эконом">Эконом</option>
+        </select>
+    </div>
+    <div>
+        <label class="form-label" for="add_descr_room">Описание номера:</label>
+    </div>
+    <div>
+        <textarea class="form-control" id="add_descr_room" name="add_descr_room" rows="5" cols="33"></textarea>
+    </div>
+    <div class="parent_load_img"><input type="file" class="form-control form-control-sm" style="border:none;"
+     id="load_img" multiple accept=".png, .jpg, .jpeg, .gif" onchange="loading(event)"></div>
+    
 </div>`,
 
 show_r=`<div id="show_room"></div>`,
