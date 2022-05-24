@@ -22,15 +22,21 @@ function send_log(el){
                     let d=JSON.stringify({"name":new_name.value,"fam":new_fam.value,"pass":new_pass.value,"ident":new_ident.value,"tel":new_tel.value}),
                     p=`<div class="look_rooms">
                         <div id="${new_ident.value}">
-                            <p class ="user">Имя: ${new_name.value}</p>
-                            <p class ="user">Фамилия: ${new_fam.value}</p>
-                            <p class ="user">Пароль: ${new_pass.value}</p>
-                            <p class ="user">Номер паспорта: ${new_ident.value}</p>
-                            <p class ="user">Телефон: ${new_tel.value}</p>
+                            <div>
+                                <p class ="user">Имя: ${new_name.value}</p>
+                                <p class ="user">Фамилия: ${new_fam.value}</p>
+                                <p class ="user">Пароль: ${new_pass.value}</p>
+                                <p class ="user">Номер паспорта: ${new_ident.value}</p>
+                                <p class ="user">Телефон: ${new_tel.value}</p>
+                            </div>
                         </div>
-                        <button class="buttons" onclick="edit_r(this)">Бронирования</button>
-                        <button class="buttons" onclick="edit_r(this)">Изменить</button>
-                        <button class="buttons" onclick="edit_r(this)">Удалить</button>
+                        <p>
+                            <button class="btn btn-info" onclick="edit_r(this)" ta-bs-toggle="modal" data-bs-target="#exampleModal"
+                            >Бронирования</button>
+                            <button class="btn btn-warning" onclick="edit_r(this)" ta-bs-toggle="modal" data-bs-target="#exampleModal"
+                            >Изменить</button>
+                            <button class="btn btn-danger" onclick="edit_r(this)">Удалить</button>
+                        </p>
                     </div>`
                     s.insertAdjacentHTML('afterbegin',p)
                 }
@@ -40,18 +46,17 @@ function send_log(el){
                 if(s){
                     let parent_s=s.parentElement;s.remove()
                     let p=`<div id="${new_ident.value}">
-                                <p class ="user">Имя: ${new_name.value}</p>
-                                <p class ="user">Фамилия: ${new_fam.value}</p>
-                                <p class ="user">Пароль: ${new_pass.value}</p>
-                                <p class ="user">Номер паспорта: ${new_ident.value}</p>
-                                <p class ="user">Телефон: ${new_tel.value}</p>
+                                 <div>
+                                    <p class ="user">Имя: ${new_name.value}</p>
+                                    <p class ="user">Фамилия: ${new_fam.value}</p>
+                                    <p class ="user">Пароль: ${new_pass.value}</p>
+                                    <p class ="user">Номер паспорта: ${new_ident.value}</p>
+                                    <p class ="user">Телефон: ${new_tel.value}</p>
+                                </div>
                             </div>`
-                        parent_s.insertAdjacentHTML('afterbegin',p)
-                /* if(s){
-                    s.textContent=JSON.stringify({"name":new_name.value,"fam":new_fam.value,"pass":new_pass.value,"ident":new_ident.value,"tel":new_tel.value}) */
-                }
+                        parent_s.insertAdjacentHTML('afterbegin',p)}
             }
-            let e=document.getElementById('log_form');if (e){e.remove()}            
+            let e=document.getElementById('log_form');if (e){e.remove()}
         }
 	}
 	else if(el.textContent==='Вход'){const txt=/[^a-zа-яё0-9]/gi
@@ -78,24 +83,31 @@ function data_from_cookie(name){
 	return prName
 }
 
-function get_data(el){const els=['booking_control','rooms_control','kl_control','report_control','show_room','show_cl_in_r']
+function get_data(el){
+    console.log(el.textContent)
+    const els=['booking_control','rooms_control','kl_control','report_control','show_room','show_cl_in_r']
     els.forEach(i=>{let e=document.getElementById(i);if(e){e.remove()}})
-    if(el.textContent==='Бронирования'){main_div.insertAdjacentHTML('beforeend',booking_c)}
-    else if(el.textContent==='Номера'){
+    //if(el.textContent==='Бронирования'){main_div.insertAdjacentHTML('beforeend',booking_c)}
+    if(el.textContent==='Номера'){
         main_div.insertAdjacentHTML('beforeend',rooms_c)
-        if(document.getElementById('cl_control')){ document.getElementById('addR').remove()}       
+        if(document.getElementById('cl_control')){ document.getElementById('addR').remove()}
     }
     else if(el.textContent==='Клиенты'){main_div.insertAdjacentHTML('beforeend',klient_c)}
     else if(el.textContent==='Отчеты'){main_div.insertAdjacentHTML('beforeend',report_c)}
     else if(el.textContent==='История'){
         socket.emit('get_data',['books_kl',data_from_cookie('user='),data_from_cookie('pswd=')])
     }
+    else if(el.textContent==='Бронирования'){
+        let data=el.parentElement.parentElement.querySelector('div').querySelector('div').querySelectorAll('p')
+       // console.log(data,data[0].textContent.split(' ').pop(),data[2].textContent.split(' ').pop())
+        socket.emit('get_data',['books_kl',data[1].textContent.split(' ').pop(),data[2].textContent.split(' ').pop()])
+    }
 }
 
 function reports(el){
     if(el.textContent==='Клиенты в номерах по выбранным датам'){
-        if(!start_d.value||!end_d.value||end_d.valueAsNumber-start_d.valueAsNumber<0||end_d.valueAsNumber>Date.now()){alert('Выберите верные даты')}
-        else{socket.emit('get_data',['clients_in_rooms',start_d.valueAsNumber,end_d.valueAsNumber])}
+        if(!AUstart_d.value||!AUend_d.value||AUend_d.valueAsNumber-AUstart_d.valueAsNumber<0||AUend_d.valueAsNumber>Date.now()){alert('Выберите верные даты')}
+        else{socket.emit('get_data',['clients_in_rooms',AUstart_d.valueAsNumber,AUend_d.valueAsNumber])}
     }
 }
 
@@ -136,16 +148,22 @@ function edit_r(el){
     if(!w){
         let e=el.parentElement.parentElement.querySelector('div').querySelector('div') ,d={},els_p,images
         if(el.textContent==='Забронировать'||el.textContent==='Изменить'||el.textContent==='Удалить'||el.textContent==='Бронирования'||el.textContent==='Бронировать'){
+            console.log(el.parentElement.parentElement,el.textContent,e,e.children)
             els_p=Array.from(e.children);
-            console.log(e.parentElement.lastElementChild,e.parentElement.lastElementChild.textContent.split(' '))
+            console.log(els_p
+               // e.querySelector('p').className,e.parentElement.lastElementChild,e.parentElement.lastElementChild.textContent.split(' ')
+                )
             images=el.parentElement.parentElement.querySelectorAll('img')
             if(e.querySelector('p').className==='room'){
                 d._id=els_p[0].textContent.split(' ').pop();d.bad=els_p[1].textContent.split(' ').pop();
                 d.cat=els_p[2].textContent.split(' ').pop();d.price=els_p[3].textContent.split(' ').pop();
                 d.descr=e.parentElement.lastElementChild.textContent
             }
-            else if(e.querySelector('p').className==='user'){d._id=els_p[3].textContent.split(' ').pop()}
+            else if(e.querySelector('p').className==='user'){
+                d._id=els_p[3].textContent.split(' ').pop();console.log(d._id)
+            }
         }
+        
         else if(el.textContent==='Подтвердить'||el.textContent==='Отменить'){
             d._id=el.parentElement.querySelector('div').id
         }
@@ -153,12 +171,17 @@ function edit_r(el){
         if(el.textContent==='Удалить'){e.parentElement.remove()}
         else if(el.textContent==='Изменить'){
             if(e.querySelector('p').className==='user'){
-                main_div.insertAdjacentHTML('beforeend',window_reg);but_reg.textContent='Изменить'
+               // main_div.insertAdjacentHTML('beforeend',window_reg);but_reg.textContent='Изменить'
+               modalBody.insertAdjacentHTML('beforeend',window_reg)
                 new_name.value=els_p[0].textContent.split(' ').pop();
                 new_fam.value=els_p[1].textContent.split(' ').pop();
                 new_pass.value=els_p[2].textContent.split(' ').pop();
                 new_ident.value=els_p[3].textContent.split(' ').pop();new_tel.value=els_p[4].textContent.split(' ').pop()
                 new_ident.disabled=true
+                exampleModalLabel.textContent='Изменение данных клиента';buttonyesmodal.textContent='Изменить';
+                const buttons=log_form.querySelectorAll('button')
+                for(let i of buttons){i.remove()}
+               buttonyesmodal.onclick=function(){send_log(this)}
             }
             else if(e.querySelector('p').className==='room'){
                // main_div.insertAdjacentHTML('beforeend',add_r);
@@ -191,16 +214,12 @@ function edit_r(el){
 }
 
 function book_contr(){
+    console.log(ABsearch_r.value,ABsearch_kl.value,ABstart_d.valueAsNumber,ABend_d.valueAsNumber)
     socket.emit('get_data',['book_data',ABsearch_r.value,ABsearch_kl.value,ABstart_d.valueAsNumber,ABend_d.valueAsNumber])
 }
 
 function kl_contr(el){
-    if(el.textContent==='Найти'){
-        const cl=document.getElementById('search_kl')
-        for(let k in cl){console.log(k, cl[k])}
-       
-        socket.emit('get_data',['kl_data',search_kl.value])
-    }
+    if(el.textContent==='Найти'){socket.emit('get_data',['kl_data',search_kl.value])}
     else if(el.textContent==='Добавить'){
         main_div.insertAdjacentHTML('beforeend',window_reg);but_reg.textContent='Добавить'
     }

@@ -33,11 +33,12 @@ socket.on('check_in', function(data){
 socket.on('get_data',(data)=>{console.log(data)
 	if(data[0]!="book_dates") {
 		let a=document.getElementById('show_room');if(a){a.remove()}
+		let b=document.getElementById('show_cl_in_r');if(b){b.remove()}
 		main_div.insertAdjacentHTML('beforeend',show_r)
 	}
 	
 	if(data[0]==='book_data'){
-		data[1].forEach(i=>{console.log(i.bookss.v)
+		data[1].forEach(i=>{//console.log(i.bookss.v)
 			i.bookss.v.start=new Date(i.bookss.v.start).toDateString()
 			i.bookss.v.end=new Date(i.bookss.v.end).toDateString()
 			let p=`<div class="look_rooms">
@@ -58,7 +59,7 @@ socket.on('get_data',(data)=>{console.log(data)
 		})
 	}
 	else if(data[0]==='rooms_data'){
-		for(let i in data[1]){console.log(i,data[1][i])
+		for(let i in data[1]){//console.log(i,data[1][i])
 			delete data[1][i].books 
 			let id_num,p
 			data[1][i]._id?id_num=data[1][i]._id:id_num=data[1][i].num
@@ -101,8 +102,9 @@ socket.on('get_data',(data)=>{console.log(data)
 						</div>
 					</div>
 					<p>
-					<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" 
-						onclick="edit_r(this)">Бронировать</button>
+					<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+						onclick="edit_r(this);exampleModalLabel.textContent='Бронирование';buttonyesmodal.textContent='Подтвердить';document.getElementById('buttonyesmodal').onclick=function(){send_book()}"						
+						>Бронировать</button>
 					</p>
 				</div>`
 			}
@@ -117,18 +119,24 @@ socket.on('get_data',(data)=>{console.log(data)
 		}
 	}
 	else if(data[0]==='kl_data'){
-		for(let i in data[1]){console.log(data[1][i])
+		for(let i in data[1]){
 			let p=`<div class="look_rooms">
 				<div id="${data[1][i].ident}">
-					<p class ="user">Имя: ${data[1][i].name}</p>
-					<p class ="user">Фамилия: ${data[1][i].fam}</p>
-					<p class ="user">Пароль: ${data[1][i].pass}</p>
-					<p class ="user">Номер паспорта: ${data[1][i].ident}</p>
-					<p class ="user">Телефон: ${data[1][i].tel}</p>
+					<div>
+						<p class ="user">Имя: ${data[1][i].name}</p>
+						<p class ="user">Фамилия: ${data[1][i].fam}</p>
+						<p class ="user">Пароль: ${data[1][i].pass}</p>
+						<p class ="user">Номер паспорта: ${data[1][i].ident}</p>
+						<p class ="user">Телефон: ${data[1][i].tel}</p>
+					</div>
 				</div>
-				<button class="buttons" onclick="edit_r(this)">Бронирования</button>
-				<button class="buttons" onclick="edit_r(this)">Изменить</button>
-				<button class="buttons" onclick="edit_r(this)">Удалить</button>
+				<p>
+					<button class="btn btn-info" onclick="get_data(this)">Бронирования</button>
+					<button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" 
+						onclick="edit_r(this)"
+					>Изменить</button>
+					<button class="btn btn-danger" onclick="edit_r(this)">Удалить</button>
+				</p>
 				</div>`
 			show_room.insertAdjacentHTML('beforeend',p)
 		}
