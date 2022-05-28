@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="author" content="Костюнин">
     <meta name="generator" content="Hugo 0.98.0">
-    <title>Navbar Template · Bootstrap v5.2</title>
+    <title>Отель</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/navbars/">
 
@@ -78,7 +78,7 @@
  
   <nav id="black-nav" class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark" aria-label="Eleventh navbar example">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Отель</a>
+      <a class="navbar-brand" href="/">Отель</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample09" aria-controls="navbarsExample09" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -86,13 +86,13 @@
       <div class="collapse navbar-collapse" id="navbarsExample09">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link active" aria-current="page"  onclick="setinfo(this)" href="#">Об отеле</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="#">Link</a>
+            <a class="nav-link active"  onclick="setinfo(this)" href="#">Сервисы</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link disabled">Disabled</a>
+            <a class="nav-link active"  onclick="setinfo(this)" href="#">Контакты</a>
           </li>
         </ul>
         <ul class="navbar-nav me-right mb-2 mb-lg-0">
@@ -296,7 +296,10 @@
                     <button class="btn" onclick="kl_contr(this)">Найти</button>
                   </li>
                   <li class="p-2 nav-item">
-                    <button class="btn" onclick="kl_contr(this)">Добавить</button>
+                   <!--  <button class="btn" onclick="kl_contr(this)">Добавить</button> -->
+                   <button class="btn" id="addR" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                    onclick="kl_contr(this);exampleModalLabel.textContent='Добавить клиента';buttonyesmodal.textContent='Добавить';buttonyesmodal.onclick=function(){send_log(this)}"
+                    >Добавить</button>
                   </li>
                 </ul>
               </div>
@@ -337,9 +340,10 @@
 
           
       <div id="main_div" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-        ddd
+        <!-- <div id="aboutHotel">
+          ddd
           Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur maxime porro fuga consequuntur non. Architecto ab corporis dolorum consequuntur modi unde, similique ipsa qui autem numquam, cupiditate non labore.
-        
+        </div> -->
       </div>
     </div>
    

@@ -85,8 +85,9 @@ function data_from_cookie(name){
 
 function get_data(el){
     console.log(el.textContent)
-    const els=['booking_control','rooms_control','kl_control','report_control','show_room','show_cl_in_r']
+    const els=['booking_control','rooms_control','kl_control','report_control','show_room','show_cl_in_r','aboutHotel']
     els.forEach(i=>{let e=document.getElementById(i);if(e){e.remove()}})
+    
     //if(el.textContent==='Бронирования'){main_div.insertAdjacentHTML('beforeend',booking_c)}
     if(el.textContent==='Номера'){
         main_div.insertAdjacentHTML('beforeend',rooms_c)
@@ -101,6 +102,22 @@ function get_data(el){
         let data=el.parentElement.parentElement.querySelector('div').querySelector('div').querySelectorAll('p')
        // console.log(data,data[0].textContent.split(' ').pop(),data[2].textContent.split(' ').pop())
         socket.emit('get_data',['books_kl',data[1].textContent.split(' ').pop(),data[2].textContent.split(' ').pop()])
+    }
+}
+
+function setinfo(el){
+    console.log(el.textContent)
+    const els=['booking_control','rooms_control','kl_control','report_control','show_room','show_cl_in_r','aboutHotel']
+    els.forEach(i=>{let e=document.getElementById(i);if(e){e.remove()}})
+    main_div.insertAdjacentHTML('beforeend',mainInf)
+    if(el.textContent==='Об отеле'){
+        aboutHotel.insertAdjacentHTML('beforeend','Об отеле')
+    }
+    else if(el.textContent==='Сервисы'){
+        aboutHotel.insertAdjacentHTML('beforeend','Сервисы')
+    }
+    else if(el.textContent==='Контакты'){
+        aboutHotel.insertAdjacentHTML('beforeend','Контакты')
     }
 }
 
@@ -221,7 +238,12 @@ function book_contr(){
 function kl_contr(el){
     if(el.textContent==='Найти'){socket.emit('get_data',['kl_data',search_kl.value])}
     else if(el.textContent==='Добавить'){
-        main_div.insertAdjacentHTML('beforeend',window_reg);but_reg.textContent='Добавить'
+       // main_div.insertAdjacentHTML('beforeend',window_reg);but_reg.textContent='Добавить'
+       if(!document.getElementById('add_room')&&!document.getElementById('log_form')){
+            modalBody.insertAdjacentHTML('beforeend',window_reg)
+            const buttons=log_form.querySelectorAll('button')
+            buttons.forEach(i=>i.remove())
+        }
     }
 }
 
@@ -241,9 +263,11 @@ function rooms_contr(el){
         socket.emit('get_data',['rooms_data',bed,cat,avail,sort,start,end])
     }
     else if(el.textContent==='Добавить'){
+        console.log(document.getElementById('add_room'))
        // main_div.insertAdjacentHTML('beforeend',add_r)
-       modalBody.insertAdjacentHTML('beforeend',add_r)
-       
+       if(!document.getElementById('add_room')&&!document.getElementById('log_form')){
+            modalBody.insertAdjacentHTML('beforeend',add_r) 
+       }
     }
 }
 

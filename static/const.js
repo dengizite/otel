@@ -133,4 +133,8 @@ dupl_inf=`
     <button class="buttons" onclick="closes(this)">Закрыть</button>
     </div>
 </div>
+`,
+
+mainInf=`
+    <div id="aboutHotel"></div>
 `
