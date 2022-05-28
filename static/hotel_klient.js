@@ -32,6 +32,7 @@ socket.on('check_in', function(data){
 
 socket.on('get_data',(data)=>{console.log(data)
 	let e=document.getElementById('aboutHotel');if(e){e.remove()}
+	document.body.classList.remove('bodyClass')
 	if(data[0]!="book_dates") {
 		let a=document.getElementById('show_room');if(a){a.remove()}
 		let b=document.getElementById('show_cl_in_r');if(b){b.remove()}
@@ -255,7 +256,8 @@ document.addEventListener('DOMContentLoaded',(e)=>{
 		socket.emit('check_in',['check',data_from_cookie('user='),data_from_cookie('pswd=')])
 	}
 	main_div.insertAdjacentHTML('beforeend',mainInf)
-	aboutHotel.insertAdjacentHTML('beforeend','Об отеле')
+	aboutHotel.insertAdjacentHTML('beforeend',mainHotelText)
+	document.body.classList.add('bodyClass')
 	/* else{
 		main_div.insertAdjacentHTML('beforeend',reg_butt)
 	} */

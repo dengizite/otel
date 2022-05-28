@@ -86,6 +86,7 @@ function data_from_cookie(name){
 function get_data(el){
     console.log(el.textContent)
     const els=['booking_control','rooms_control','kl_control','report_control','show_room','show_cl_in_r','aboutHotel']
+    document.body.classList.remove('bodyClass')
     els.forEach(i=>{let e=document.getElementById(i);if(e){e.remove()}})
     
     //if(el.textContent==='Бронирования'){main_div.insertAdjacentHTML('beforeend',booking_c)}
@@ -108,16 +109,18 @@ function get_data(el){
 function setinfo(el){
     console.log(el.textContent)
     const els=['booking_control','rooms_control','kl_control','report_control','show_room','show_cl_in_r','aboutHotel']
+    document.body.classList.remove('bodyClass')
     els.forEach(i=>{let e=document.getElementById(i);if(e){e.remove()}})
     main_div.insertAdjacentHTML('beforeend',mainInf)
+    document.body.classList.add('bodyClass')
     if(el.textContent==='Об отеле'){
-        aboutHotel.insertAdjacentHTML('beforeend','Об отеле')
+        aboutHotel.insertAdjacentHTML('beforeend',aboutHotelText)
     }
     else if(el.textContent==='Сервисы'){
-        aboutHotel.insertAdjacentHTML('beforeend','Сервисы')
+        aboutHotel.insertAdjacentHTML('beforeend',servisHotelText)
     }
     else if(el.textContent==='Контакты'){
-        aboutHotel.insertAdjacentHTML('beforeend','Контакты')
+        aboutHotel.insertAdjacentHTML('beforeend',contactsHotelText)
     }
 }
 
