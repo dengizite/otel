@@ -224,7 +224,9 @@ socket.on('booking',(data)=>{console.log(data)
 })
 
 socket.on('reports',(data)=>{console.log(data)
-	let a=document.getElementById('show_cl_in_r');if(a){a.remove()}
+	const els=['booking_control','rooms_control','kl_control','report_control','show_room','show_cl_in_r','aboutHotel']
+    document.body.classList.remove('bodyClass')
+    els.forEach(i=>{let e=document.getElementById(i);if(e){e.remove()}})
 	main_div.insertAdjacentHTML('beforeend',show_clients_in_r)
 	if(data[0]==='clients_in_rooms'){
 		data[1].forEach(i=>{
@@ -239,6 +241,7 @@ socket.on('reports',(data)=>{console.log(data)
 			</div>`)
 		})
 		}
+	else if(data[0]==='notCients'){alert(data[1])}
 })
 
 socket.on('chat',(data)=>{console.log(data)})

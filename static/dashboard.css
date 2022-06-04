@@ -42,9 +42,10 @@ body {
   }
 }
 
-.look_rooms{
+.look_rooms, .clients_in_r{
   background-color: #0000000d; margin-bottom: 10px; padding: 10px;
 }
+
 
 .look_rooms>div{
   display: grid;

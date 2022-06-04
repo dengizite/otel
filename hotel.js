@@ -185,6 +185,7 @@ io.on('connection', (socket) => {
 				}
 				aggr_find(a).then((resp)=>{console.log(182,resp)
 					if(resp.length!=0){io.to(socket.id).emit('reports',['clients_in_rooms',resp])}
+					else {io.to(socket.id).emit('reports',['notCients','В указанное время в отеле никто не проживал. Выберите другие даты'])}
 				}).catch(err=>{catch_err(err)})
 		}
 
