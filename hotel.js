@@ -3,7 +3,7 @@ import {default as io_base} from 'socket.io';import path from 'path'
 import {default as mongodb} from 'mongodb';
 import fs from 'fs';
 
-import nodemailer from 'nodemailer';
+/* import nodemailer from 'nodemailer';
 
 // async..await is not allowed in global scope, must use a wrapper
 export async function mail() {
@@ -42,7 +42,29 @@ export async function mail() {
   // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
 
-mail().catch(console.error);
+mail().catch(console.error); */
+
+import { SMTPClient } from 'emailjs';
+
+const mailclient = new SMTPClient({
+	user: 'darom@darom.tk',
+	password: 'roge816013',
+	host: 'smtp.yandex.ru',
+	ssl: true,
+});
+
+try {
+	const message = await mailclient.sendAsync({
+		text: 'i hope this works',
+		from: 'you <darom@darom.tk>',
+		to: 'someone <1@melochevka.ru>, another <melochevka@melochevka.ru>',
+		cc: 'else <dollar123@mail.ru>',
+		subject: 'testing emailjs',
+	});
+	console.log(123456,message);
+} catch (err) {
+	console.error(err);
+}
 
 const MongoClient=mongodb.MongoClient,
 client=new MongoClient('mongodb+srv://dengizite:Egorka124@cluster0.p49dp.mongodb.net/hotel?retryWrites=true&w=majority'),
@@ -141,7 +163,7 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('get_data',(data)=>{console.log(49,data)
-		mail()
+		//mail()
 		if(data[0]==='book_data'){let a={}
 			if(data[1]){let b=`bookss.v.room`;a[b]=data[1]}		
 			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
