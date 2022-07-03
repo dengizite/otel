@@ -52,7 +52,7 @@ import { SMTPClient } from 'emailjs';
 
 const mailclient = new SMTPClient({
 	user: 'darom@darom.tk',
-	password: 'roge816013',
+	password: '***',
 	host: 'smtp.yandex.ru',
 	ssl: true,
 });
