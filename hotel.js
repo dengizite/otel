@@ -3,6 +3,47 @@ import {default as io_base} from 'socket.io';import path from 'path'
 import {default as mongodb} from 'mongodb';
 import fs from 'fs';
 
+import nodemailer from 'nodemailer';
+
+// async..await is not allowed in global scope, must use a wrapper
+export async function mail() {
+  // Generate test SMTP service account from ethereal.email
+  // Only needed if you don't have a real mail account for testing
+  let testAccount = await nodemailer.createTestAccount();
+
+  // create reusable transporter object using the default SMTP transport
+  let transporter = nodemailer.createTransport({
+    ///host: "smtp.ethereal.email",
+	host: "smtp.yandex.ru",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: '***',
+        pass: '***'
+    },
+  });
+
+
+
+  // send mail with defined transport object
+  let info = await transporter.sendMail({
+    from: '"Dmitrii Kostiunin" <darom@darom.tk>', // sender address
+    to: "1@melochevka.ru", // list of receivers
+    subject: "Hello ✔", // Subject line
+    text: "Hello worlddd?", // plain text body
+    html: "<b>Hello world?</b>", // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+  // Preview only available when sending through an Ethereal account
+  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+}
+
+mail().catch(console.error);
+
 const MongoClient=mongodb.MongoClient,
 client=new MongoClient('mongodb+srv://dengizite:Egorka124@cluster0.p49dp.mongodb.net/hotel?retryWrites=true&w=majority'),
 event_close = "serverOpening", event_open = "serverClosed";
@@ -100,6 +141,7 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('get_data',(data)=>{console.log(49,data)
+		mail()
 		if(data[0]==='book_data'){let a={}
 			if(data[1]){let b=`bookss.v.room`;a[b]=data[1]}		
 			if(data[2]){let b=`bookss.v.fam`;a[b]={'$regex':data[2],'$options':'i'}}
