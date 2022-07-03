@@ -18,8 +18,12 @@ export async function mail() {
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-        user: 'darom@darom.tk',
-        pass: 'roge816013'
+<<<<<<< HEAD
+        user: '***',
+        pass: '***'
+=======
+        
+>>>>>>> 0082ca919a4555f5de900a7007c7602c3b6e50d5
     },
   });
 
