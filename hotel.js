@@ -22,8 +22,7 @@ export async function mail() {
         user: '***',
         pass: '***'
 =======
-        user: 'darom@darom.tk',
-        pass: 'roge816013'
+        
 >>>>>>> 0082ca919a4555f5de900a7007c7602c3b6e50d5
     },
   });
